@@ -5,7 +5,7 @@
 replicaCount: 1
 
 image:
-  repository: gitea/gitea:1.9.1
+  repository: gitea/gitea:1.9.5
   pullPolicy: IfNotPresent
 
 nameOverride: ""
@@ -21,15 +21,15 @@ extraVolumes:
 
 expose:
   # Set the way how to expose the service. Set the type as "ingress","clusterIP","LoadBalancer"
-  # or "nodePort" and fill the information in the corresponding 
+  # or "nodePort" and fill the information in the corresponding
   # section
   type: ingress
   tls:
     enabled: false
     # Fill the name of secret if you want to use your own TLS certificate
-    # and private key. The secret must contain keys named tls.crt and 
+    # and private key. The secret must contain keys named tls.crt and
     # tls.key that contain the certificate and private key to use for TLS
-    # The certificate and private key will be generated automatically if 
+    # The certificate and private key will be generated automatically if
     # it is not set
     secretName: ""
   ingress:
@@ -53,7 +53,7 @@ expose:
     # The name of NodePort service
     # name: gitea
     ports:
-      ssh: 
+      ssh:
         # The service port gitea listens on when serving with SSH
         port: 22
         # The node port gitea listens on when serving with SSH

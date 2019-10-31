@@ -11,6 +11,11 @@ metadata:
     component: agent
 spec:
   replicas: {{ .Values.agent.replicas }}
+  selector:
+    matchLabels:
+      app: {{ template "drone.name" . }}
+      release: "{{ .Release.Name }}"
+      component: agent
   template:
     metadata:
       annotations:

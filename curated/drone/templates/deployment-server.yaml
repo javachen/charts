@@ -11,6 +11,11 @@ metadata:
     component: server
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: {{ template "drone.name" . }}
+      release: "{{ .Release.Name }}"
+      component: server
   template:
     metadata:
       annotations:

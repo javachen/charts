@@ -11,7 +11,6 @@ image:
 nameOverride: ""
 fullnameOverride: ""
 
-
 expose:
   # Set the way how to expose the service. Set the type as "ingress","clusterIP","LoadBalancer"
   # or "nodePort" and fill the information in the corresponding

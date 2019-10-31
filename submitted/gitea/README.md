@@ -1,8 +1,6 @@
 # gitea
 
-![img](1.png)
-
-![img](2.png)
+![img](https://tva1.sinaimg.cn/large/006y8mN6ly1g8hgqapt32j30qw0qoju9.jpg)
 
 ## 功能介绍
 

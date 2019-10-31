@@ -11,13 +11,6 @@ image:
 nameOverride: ""
 fullnameOverride: ""
 
-# 必填,这是gitea的数据目录,仓库都存放在这里
-extraVolumes:
-  - name: data
-# emptyDir只是用来演示的,得按照自身实际情况修改.
-    emptyDir: {}
-    # hostPath:
-    #   path: /data
 
 expose:
   # Set the way how to expose the service. Set the type as "ingress","clusterIP","LoadBalancer"
@@ -74,6 +67,33 @@ expose:
       http: 80
 
 
+## Enable persistence using Persistent Volume Claims
+## ref: http://kubernetes.io/docs/user-guide/persistent-volumes/
+##
+persistence:
+  enabled: false
+
+  ## A manually managed Persistent Volume and Claim
+  ## Requires persistence.enabled: true
+  ## If defined, PVC must be created manually before volume will be bound
+  # existingClaim:
+
+  ## rabbitmq data Persistent Volume Storage Class
+  ## If defined, storageClassName: <storageClass>
+  ## If set to "-", storageClassName: "", which disables dynamic provisioning
+  ## If undefined (the default) or set to null, no storageClassName spec is
+  ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
+  ##   GKE, AWS & OpenStack)
+  ##
+  # storageClass: "-"
+  accessMode: ReadWriteOnce
+  size: 1Gi
+
+extraContainers: |
+
+## additional volumes, e. g. for secrets used in an extraContainers.
+##
+extraVolumes: |
 
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious

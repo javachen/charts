@@ -17,9 +17,17 @@ spec:
         app.kubernetes.io/instance: {{ .Release.Name }}
     spec:
       volumes:
-{{- if .Values.extraVolumes }}
-{{ toYaml .Values.extraVolumes | indent 6 }}
+      - name: data
+      {{- if .Values.persistence.enabled }}
+        persistentVolumeClaim:
+          claimName: {{ .Values.persistence.existingClaim | default (include "gitea.fullname" .) }}
+      {{- else }}
+        emptyDir: {}
+      {{- end -}}
+{{- with .Values.extraVolumes }}
+{{ tpl . $ | indent 6 }}
 {{- end }}
+{{ end }}
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}"
@@ -27,6 +35,9 @@ spec:
           volumeMounts:
           - mountPath: /data
             name: data
+{{- with .Values.extraContainers }}
+{{ tpl . $ | indent 6 }}
+{{- end }}
           ports:
             - name: http
               containerPort: 3000

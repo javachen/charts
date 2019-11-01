@@ -1,4 +1,4 @@
-helminstall:
+install:
 		helm install \
 		--set expose.ingress.host=www.zeusro.tech\
         --set expose.type=ingress \

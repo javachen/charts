@@ -16,7 +16,11 @@ helm install stable/drone
 To install the chart with the release name `my-release`:
 
 ```console
+# For helm2 
 helm install --name my-release <helm-repo>/drone
+
+# For helm2 
+helm install my-release <helm-repo>/drone
 ```
 
 helm install --name my-release stable/drone

@@ -20,7 +20,7 @@ images:
   ##
   dind:
     repository: "docker.io/library/docker"
-    tag: 18.06.1-ce-dind
+    tag: 19.03.4-dind
     pullPolicy: IfNotPresent
 
 service:

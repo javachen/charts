@@ -12,6 +12,14 @@ metadata:
 spec:
   replicas: {{ .Values.defaultBackend.replicaCount }}
   revisionHistoryLimit: {{ .Values.revisionHistoryLimit }}
+  selector:
+    matchLabels:
+      app: {{ template "nginx-ingress.name" . }}
+      component: "{{ .Values.defaultBackend.name }}"
+      release: {{ .Release.Name }}
+      {{- if .Values.defaultBackend.podLabels }}
+{{ toYaml .Values.defaultBackend.podLabels | indent 6 }}
+      {{- end }}
   template:
     metadata:
     {{- if .Values.defaultBackend.podAnnotations }}

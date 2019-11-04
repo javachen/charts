@@ -1,5 +1,5 @@
 {{- if eq .Values.controller.kind "Deployment" }}
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
@@ -12,6 +12,14 @@ metadata:
 spec:
   replicas: {{ .Values.controller.replicaCount }}
   revisionHistoryLimit: {{ .Values.revisionHistoryLimit }}
+  selector:
+    matchLabels:
+      app: {{ template "nginx-ingress.name" . }}
+      component: "{{ .Values.controller.name }}"
+      release: {{ .Release.Name }}
+      {{- if .Values.controller.podLabels }}
+{{ toYaml .Values.controller.podLabels | indent 6 }}
+      {{- end }}
   strategy:
 {{ toYaml .Values.controller.updateStrategy | indent 4 }}
   minReadySeconds: {{ .Values.controller.minReadySeconds }}

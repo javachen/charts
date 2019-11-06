@@ -1,5 +1,0 @@
-dependencies:
-- name: mongodb
-  version: 5.x
-  repository: https://apphub.aliyuncs.com
-  condition: mongodb.enabled

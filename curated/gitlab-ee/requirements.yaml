@@ -1,7 +1,0 @@
-dependencies:
-- name: redis
-  version: 0.9.0
-  repository: https://apphub.aliyuncs.com
-- name: postgresql
-  version: 0.8.1
-  repository: https://apphub.aliyuncs.com

@@ -26,3 +26,14 @@ spec:
     enabled: true
   network:
     hostNetwork: false
+  storage:
+    useAllNodes: false
+    useAllDevices: false
+    deviceFilter:
+    location:
+    config:
+      nodes:
+      - name: "kube-node1"
+        devices:
+        - name: "sdb"
+   

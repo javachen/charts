@@ -7,19 +7,120 @@
 
 ### 部署rook
 
-    helm install --namespace rook-ceph --name rook-ceph rook-ceph
+    helm repo add rook-release https://charts.rook.io/release
+    
+    
+    helm install --name rook-ceph --namespace rook-ceph rook-release/rook-ceph
+    
+    kubectl --namespace rook-ceph get pods -l "app=rook-ceph-operator"
 
 ### 通过rook部署集群
 
 > 在部署集群时，各节点上需要至少有1块硬盘，且节点数量大于3个。
 
-    git clone https://github.com/rook/rook
-    cd rook/cluster/examples/kubernetes/ceph
-    kubectl apply -f cluster.yaml
-    kubectl get pods -n rook-ceph -w
+参考
 
-    kubectl apply -f storageclass.yaml
-    kubectl apply -f toolbox.yaml
+https://blog.51cto.com/bigboss/2320016
+
+https://blog.csdn.net/networken/article/details/85772418
+
+https://blog.csdn.net/aixiaoyang168/article/details/86467931
+
+```bash
+git clone https://github.com/rook/rook
+cd rook/cluster/examples/kubernetes/ceph
+
+cat > cluster-minimal.yaml << EOF
+apiVersion: ceph.rook.io/v1
+kind: CephCluster
+metadata:
+  name: rook-ceph
+  namespace: rook-ceph
+spec:
+  cephVersion:
+    image: ceph/ceph:v14.2.4-20190917
+    allowUnsupported: false
+  dataDirHostPath: /var/lib/rook
+  mon:
+    count: 1
+    allowMultiplePerNode: false
+  dashboard:
+    enabled: true
+    ssl: true
+  monitoring:
+    enabled: false  # requires Prometheus to be pre-installed
+    rulesNamespace: rook-ceph
+  network:
+    hostNetwork: false
+  storage:
+    useAllNodes: false
+    useAllDevices: false
+    deviceFilter:
+    location:
+    config:
+      nodes:
+      - name: "k8s-rke-node001"
+        devices:
+        - name: "sdb"  
+EOF
+
+kubectl apply -f cluster-minimal.yaml
+
+kubectl get pods -n rook-ceph -w
+kubectl -n rook-ceph get deployment
+kubectl get service -n rook-ceph
+
+kubectl apply -f dashboard-external-https.yaml
+kubectl get service -n rook-ceph | grep dashboard
+MGR_POD=`kubectl get pod -n rook-ceph | grep mgr | awk '{print $1}'`
+kubectl -n rook-ceph logs $MGR_POD | grep password
+# https://192.168.56.111:30225/
+
+cat > storageclass-test.yaml << EOF
+apiVersion: ceph.rook.io/v1
+kind: CephBlockPool
+metadata:
+  name: replicapool
+  namespace: rook-ceph
+spec:
+  replicated:
+    size: 1
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+   name: rook-ceph-block
+provisioner: ceph.rook.io/block
+parameters:
+  blockPool: replicapool
+  clusterNamespace: rook-ceph
+  fstype: xfs
+EOF
+
+kubectl apply -f storageclass-test.yaml
+kubectl get storageclass
+
+kubectl apply -f toolbox.yaml
+kubectl -n rook-ceph get pods -o wide | grep ceph-tools
+kubectl -n rook-ceph exec -it rook-ceph-tools-856c5bc6b4-rnzxp bash
+ceph status
+cd /etc/ceph/
+cat ceph.conf 
+cat keyring
+cat rbdmap 
+
+cd ..
+kubectl apply -f mysql.yaml
+kubectl apply -f wordpress.yaml
+
+
+kubectl delete -f cluster-minimal.yaml
+kubectl delete -f dashboard-external-https.yaml
+kubectl delete -f storageclass-test.yaml
+kubectl delete -f toolbox.yaml
+kubectl delete -f mysql.yaml
+kubectl delete -f wordpress.yaml
+```
 
 ## 部署elasticsearch
 

@@ -20,6 +20,7 @@ spec:
     email: {{ .Values.letsEncrypt.email }}
     privateKeySecretRef:
       name: letsencrypt-{{ .Values.letsEncrypt.environment }}
-    http01: {}
+    solvers: 
+    {{ toYaml .Values.letsEncrypt.solvers | indent 4 }}
   {{- end -}}
 {{- end -}}

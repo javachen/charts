@@ -16,7 +16,7 @@ metadata:
     nginx.ingress.kubernetes.io/ssl-redirect: "false" # turn off ssl redirect for external.
 {{- else }}
   {{- if ne .Values.ingress.tls.source "secret" }}
-    certmanager.k8s.io/issuer: {{ template "rancher.fullname" . }}
+    certmanager.k8s.io/cluster-issuer: {{ template "rancher.fullname" . }}-letsencrypt-{{ .Values.letsEncrypt.environment }}
   {{- end }}
 {{- end }}
 {{- if .Values.ingress.extraAnnotations }}

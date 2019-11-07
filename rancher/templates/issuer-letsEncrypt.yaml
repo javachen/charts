@@ -20,7 +20,8 @@ spec:
     email: {{ .Values.letsEncrypt.email }}
     privateKeySecretRef:
       name: {{ template "rancher.fullname" . }}-letsencrypt-{{ .Values.letsEncrypt.environment }}
-{{- if .Values.letsEncrypt.solvers  }}      
+{{- if .Values.letsEncrypt.solvers  }}   
+    solvers:  
 {{ toYaml .Values.letsEncrypt.solvers | indent 4 }}
 {{- else }}
     http01: {}

@@ -1,0 +1,20 @@
+hostname: rancher.test.wesine.com.cn
+ingress:
+  tls:
+    source: letsEncrypt
+letsEncrypt:
+  email: chenzj@wesine.com
+  environment: prod
+  solvers: 
+  - selector:
+      dnsNames:
+      - 'rancher.test.wesine.com.cn'
+    dns01:
+      webhook:
+        groupName: acme.wesine.com.cn 
+        solverName: dnspod
+        config:
+          apiID: 123438  #DNSPOD 的 apiID，注意替换
+          apiTokenSecretRef:
+            key: api-token
+            name: dnspod-credentials 

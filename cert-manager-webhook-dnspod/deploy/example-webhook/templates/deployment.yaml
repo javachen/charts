@@ -3,23 +3,24 @@ kind: Deployment
 metadata:
   name: {{ include "example-webhook.fullname" . }}
   labels:
-    app: {{ include "example-webhook.name" . }}
-    chart: {{ include "example-webhook.chart" . }}
-    release: {{ .Release.Name }}
-    heritage: {{ .Release.Service }}
+{{ include "example-webhook.labels" . | indent 4 }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: {{ include "example-webhook.name" . }}
-      release: {{ .Release.Name }}
+      app.kubernetes.io/name: {{ include "example-webhook.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
   template:
     metadata:
       labels:
-        app: {{ include "example-webhook.name" . }}
-        release: {{ .Release.Name }}
+        app.kubernetes.io/name: {{ include "example-webhook.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
     spec:
       serviceAccountName: {{ include "example-webhook.fullname" . }}
+    {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ default .Chart.AppVersion .Values.image.tag }}"

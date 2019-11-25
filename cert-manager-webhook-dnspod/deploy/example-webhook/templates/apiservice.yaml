@@ -3,10 +3,7 @@ kind: APIService
 metadata:
   name: v1alpha1.{{ .Values.groupName }}
   labels:
-    app: {{ include "example-webhook.name" . }}
-    chart: {{ include "example-webhook.chart" . }}
-    release: {{ .Release.Name }}
-    heritage: {{ .Release.Service }}
+{{ include "example-webhook.labels" . | indent 4 }}
   annotations:
     certmanager.k8s.io/inject-ca-from: "{{ .Release.Namespace }}/{{ include "example-webhook.servingCertificate" . }}"
 spec:

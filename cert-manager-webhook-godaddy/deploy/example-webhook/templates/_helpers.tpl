@@ -31,6 +31,22 @@ Create chart name and version as used by the chart label.
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
+{{/*
+Common labels
+*/}}
+{{- define "example-webhook.labels" -}}
+app.kubernetes.io/name: {{ include "example-webhook.name" . }}
+helm.sh/chart: {{ include "example-webhook.chart" . }}
+app.kubernetes.io/instance: {{ .Release.Name }}
+{{- if .Chart.AppVersion }}
+app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+{{- end }}
+app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- end -}}
+
+{{/*
+PKI
+*/}}
 {{- define "example-webhook.selfSignedIssuer" -}}
 {{ printf "%s-selfsign" (include "example-webhook.fullname" .) }}
 {{- end -}}

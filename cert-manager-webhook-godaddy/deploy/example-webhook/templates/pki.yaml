@@ -1,32 +1,26 @@
 ---
 # Create a selfsigned Issuer, in order to create a root CA certificate for
 # signing webhook serving certificates
-apiVersion: cert-manager.io/v1alpha2
+apiVersion: certmanager.k8s.io/v1alpha1
 kind: Issuer
 metadata:
   name: {{ include "example-webhook.selfSignedIssuer" . }}
   namespace: {{ .Release.Namespace | quote }}
   labels:
-    app: {{ include "example-webhook.name" . }}
-    chart: {{ include "example-webhook.chart" . }}
-    release: {{ .Release.Name }}
-    heritage: {{ .Release.Service }}
+{{ include "example-webhook.labels" . | indent 4 }}
 spec:
   selfSigned: {}
 
 ---
 
 # Generate a CA Certificate used to sign certificates for the webhook
-apiVersion: cert-manager.io/v1alpha2
+apiVersion: certmanager.k8s.io/v1alpha1
 kind: Certificate
 metadata:
   name: {{ include "example-webhook.rootCACertificate" . }}
   namespace: {{ .Release.Namespace | quote }}
   labels:
-    app: {{ include "example-webhook.name" . }}
-    chart: {{ include "example-webhook.chart" . }}
-    release: {{ .Release.Name }}
-    heritage: {{ .Release.Service }}
+{{ include "example-webhook.labels" . | indent 4 }}
 spec:
   secretName: {{ include "example-webhook.rootCACertificate" . }}
   duration: 43800h # 5y
@@ -38,16 +32,13 @@ spec:
 ---
 
 # Create an Issuer that uses the above generated CA certificate to issue certs
-apiVersion: cert-manager.io/v1alpha2
+apiVersion: certmanager.k8s.io/v1alpha1
 kind: Issuer
 metadata:
   name: {{ include "example-webhook.rootCAIssuer" . }}
   namespace: {{ .Release.Namespace | quote }}
   labels:
-    app: {{ include "example-webhook.name" . }}
-    chart: {{ include "example-webhook.chart" . }}
-    release: {{ .Release.Name }}
-    heritage: {{ .Release.Service }}
+{{ include "example-webhook.labels" . | indent 4 }}
 spec:
   ca:
     secretName: {{ include "example-webhook.rootCACertificate" . }}
@@ -55,16 +46,13 @@ spec:
 ---
 
 # Finally, generate a serving certificate for the webhook to use
-apiVersion: cert-manager.io/v1alpha2
+apiVersion: certmanager.k8s.io/v1alpha1
 kind: Certificate
 metadata:
   name: {{ include "example-webhook.servingCertificate" . }}
   namespace: {{ .Release.Namespace | quote }}
   labels:
-    app: {{ include "example-webhook.name" . }}
-    chart: {{ include "example-webhook.chart" . }}
-    release: {{ .Release.Name }}
-    heritage: {{ .Release.Service }}
+{{ include "example-webhook.labels" . | indent 4 }}
 spec:
   secretName: {{ include "example-webhook.servingCertificate" . }}
   duration: 8760h # 1y

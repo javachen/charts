@@ -1,9 +1,11 @@
+
 {{- if eq .Values.tls "ingress" -}}
   {{- if eq .Values.ingress.tls.source "letsEncrypt" -}}
-apiVersion: certmanager.k8s.io/v1alpha1
+    {{- if .Capabilities.APIVersions.Has "cert-manager.io/v1alpha2" -}}
+apiVersion: cert-manager.io/v1alpha2
 kind: ClusterIssuer
 metadata:
-  name: {{ template "rancher.fullname" . }}-letsencrypt-{{ .Values.letsEncrypt.environment }}
+  name: {{ template "rancher.fullname" . }}
   labels:
     app: {{ template "rancher.fullname" . }}
     chart: {{ .Chart.Name }}-{{ .Chart.Version }}
@@ -11,7 +13,7 @@ metadata:
     release: {{ .Release.Name }}
 spec:
   acme:
-    {{- if eq .Values.letsEncrypt.environment "prod" }}
+    {{- if eq .Values.letsEncrypt.environment "production" }}
     server: https://acme-v02.api.letsencrypt.org/directory
     {{- end }}
     {{- if eq .Values.letsEncrypt.environment "staging" }}
@@ -19,12 +21,44 @@ spec:
     {{- end }}
     email: {{ .Values.letsEncrypt.email }}
     privateKeySecretRef:
-      name: {{ template "rancher.fullname" . }}-letsencrypt-{{ .Values.letsEncrypt.environment }}
+      name: letsencrypt-{{ .Values.letsEncrypt.environment }}
+{{- if .Values.letsEncrypt.solvers  }}   
+    solvers:  
+{{ toYaml .Values.letsEncrypt.solvers | indent 4 }}
+{{- else }}
+    solvers:
+    - http01:
+        ingress:
+          class: nginx
+{{- end }}        
+
+    {{- else if .Capabilities.APIVersions.Has "certmanager.k8s.io/v1alpha1" -}}
+apiVersion: certmanager.k8s.io/v1alpha1
+kind: Issuer
+metadata:
+  name: {{ template "rancher.fullname" . }}
+  labels:
+    app: {{ template "rancher.fullname" . }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+    heritage: {{ .Release.Service }}
+    release: {{ .Release.Name }}
+spec:
+  acme:
+    {{- if eq .Values.letsEncrypt.environment "production" }}
+    server: https://acme-v02.api.letsencrypt.org/directory
+    {{- end }}
+    {{- if eq .Values.letsEncrypt.environment "staging" }}
+    server: https://acme-staging-v02.api.letsencrypt.org/directory
+    {{- end }}
+    email: {{ .Values.letsEncrypt.email }}
+    privateKeySecretRef:
+      name: letsencrypt-{{ .Values.letsEncrypt.environment }}
 {{- if .Values.letsEncrypt.solvers  }}   
     solvers:  
 {{ toYaml .Values.letsEncrypt.solvers | indent 4 }}
 {{- else }}
     http01: {}
-{{- end }}    
+{{- end }}  
+    {{- end -}}
   {{- end -}}
 {{- end -}}

@@ -1,11 +1,11 @@
-IMAGE_NAME := "kaelz/cert-manager-webhook-dnspod"
-IMAGE_TAG := "1.0.0"
+IMAGE_NAME := "qqshfox/cert-manager-webhook-dnspod"
+IMAGE_TAG := "latest"
 
 OUT := $(shell pwd)/_out
 
 $(shell mkdir -p "$(OUT)")
 
-test:
+verify:
 	go test -v .
 
 build:
@@ -16,7 +16,8 @@ push:
 
 .PHONY: rendered-manifest.yaml
 rendered-manifest.yaml:
-	helm template cert-manager-webhook-dnspod \
+	helm template \
+	    --name cert-manager-webhook-dnspod \
         --set image.repository=$(IMAGE_NAME) \
         --set image.tag=$(IMAGE_TAG) \
-        charts > "$(OUT)/rendered-manifest.yaml"
+        deploy/example-webhook > "$(OUT)/rendered-manifest.yaml"

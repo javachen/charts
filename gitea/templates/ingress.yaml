@@ -4,6 +4,10 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: {{.Values.expose.ingress.host}}
+  {{- with .Values.expose.ingress.annotations }}
+  annotations:
+    {{- toYaml . | indent 4 }}
+  {{- end }}
   labels:
 {{ include "gitea.labels" . | indent 4 }}
 spec:

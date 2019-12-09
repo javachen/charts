@@ -4,7 +4,7 @@ metadata:
   name: {{ template "gitea.fullname" . }}
   {{- with .Values.expose.loadBalancer.annotations }}
   annotations:
-    {{- toYaml . | nindent 4 }}
+    {{- toYaml . | indent 4 }}
   {{- end }}
   labels:
 {{ include "gitea.labels" . | indent 4 }}

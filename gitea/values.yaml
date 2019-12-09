@@ -5,7 +5,11 @@
 replicaCount: 1
 
 image:
-  repository: gitea/gitea:1.9.5
+  ## The official gitea image, change tag to use a different version.
+  ## ref: https://hub.docker.com/r/gitea/gitea/tags/
+  ##
+  repository: gitea/gitea
+  tag: 1.10.1
   pullPolicy: IfNotPresent
 
 nameOverride: ""
@@ -28,9 +32,8 @@ expose:
     enabled: false
     host: gitea.cluster.local
     annotations:
-      ingress.kubernetes.io/ssl-redirect: "true"
+      kubernetes.io/ingress.class: nginx
       nginx.ingress.kubernetes.io/ssl-redirect: "true"
-      ingress.kubernetes.io/proxy-body-size: "0"
       nginx.ingress.kubernetes.io/proxy-body-size: "0"
       # kubernetes.io/tls-acme: "true"
   clusterIP:

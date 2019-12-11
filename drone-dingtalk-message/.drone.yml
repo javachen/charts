@@ -1,0 +1,75 @@
+---
+kind: pipeline
+name: testing
+
+steps:
+  - name: vet
+    pull: always
+    image: golang
+    commands:
+      - make vet
+    environment:
+      GO111MODULE: "on"
+    volumes:
+      - name: gopath
+        path: /go
+
+  - name: test
+    pull: always
+    image: golang
+    commands:
+      - make test
+      - make coverage
+    environment:
+      GO111MODULE: "on"
+    volumes:
+      - name: gopath
+        path: /go
+
+  - name: codecov
+    pull: always
+    image: plugins/codecov
+    settings:
+      token:
+        from_secret: codecov_token
+
+volumes:
+  - name: gopath
+    temp: {}
+
+trigger:
+  event:
+    - pull_request
+
+---
+kind: pipeline
+name: dryrun
+
+steps:
+  - name: build
+    pull: always
+    image: golang
+    commands:
+      - go build -a -o drone-dingtalk-message .
+    environment:
+      CGO_ENABLED: 0
+      GO111MODULE: "on"
+
+  - name: dryrun
+    pull: always
+    image: plugins/docker
+    settings:
+      cache_from: lddsb/drone-dingtalk-message
+      dockerfile: Dockerfile
+      dry_run: true
+      repo: lddsb/drone-dingtalk-message
+      tags:
+        - latest
+        - 1.0.0
+
+trigger:
+  event:
+    - pull_request
+
+depends_on:
+  - testing

@@ -10,7 +10,7 @@ just support `text`, `markdown` and `link` type now
 pipeline:
   ...
   notification:
-    image: lddsb/drone-dingtalk-message
+    image: javachen/drone-dingtalk-message
     token: your-group-bot-token
     type: markdown
 ```
@@ -23,7 +23,7 @@ name: default
 steps:
 ...
 - name: notification
-  image: lddsb/drone-dingtalk-message
+  image: javachen/drone-dingtalk-message
   settings:
     token: your-groupbot-token
     type: markdown
@@ -95,11 +95,11 @@ That's a good news, we support `tpl` now.This is a example for `markdown` messag
 
 	# [TPL_REPO_FULL_NAME] build [TPL_BUILD_STATUS], takes [TPL_BUILD_CONSUMING]s
 	[TPL_COMMIT_MSG]
-
+	
 	[TPL_COMMIT_SHA]([TPL_COMMIT_LINK])
-
+	
 	[[TPL_AUTHOR_NAME]([TPL_AUTHOR_EMAIL])](mailto:[TPL_AUTHOR_EMAIL])
-
+	
 	[Click To The Build Detail Page [TPL_STATUS_EMOTICON)]]([TPL_BUILD_LINK])
 You can write your own `tpl` what you want. The syntax of	`tpl` is very simple, you can fill `tpl` with preset variables. It's a list of currently supported preset variables:
 
@@ -160,7 +160,7 @@ We use `go mod` to manage dependencies, so it's easy to build.
 
 - get this repo
 ```shell
-$ git clone https://github.com/lddsb/drone-dingtalk-message.git /path/to/you/want
+$ git clone https://github.com/javachen/drone-dingtalk-message.git /path/to/you/want
 ```
 - build
 ```shell

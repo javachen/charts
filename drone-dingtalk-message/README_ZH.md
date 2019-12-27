@@ -10,7 +10,7 @@
 pipeline:
   ...
   notification:
-    image: lddsb/drone-dingtalk-message
+    image: javachen/drone-dingtalk-message
     token: your-group-bot-token
     type: markdown
 ```
@@ -23,7 +23,7 @@ name: default
 steps:
 ...
 - name: notification
-  image: lddsb/drone-dingtalk-message
+  image: javachen/drone-dingtalk-message
   settings:
     token: your-groupbot-token
     type: markdown
@@ -95,11 +95,11 @@ steps:
 
 	# [TPL_REPO_FULL_NAME] build [TPL_BUILD_STATUS], takes [TPL_BUILD_CONSUMING]s
 	[TPL_COMMIT_MSG]
-
+	
 	[TPL_COMMIT_SHA]([TPL_COMMIT_LINK])
-
+	
 	[[TPL_AUTHOR_NAME]([TPL_AUTHOR_EMAIL])](mailto:[TPL_AUTHOR_EMAIL])
-
+	
 	[Click To The Build Detail Page [TPL_STATUS_EMOTICON)]]([TPL_BUILD_LINK])
 
 你可以写自己喜欢的模版，终于不用再对着默认模版发愁啦！并且模版的语法非常简单！比较可惜的是目前支持的变量还比较少，下面是当前支持的变量的列表：
@@ -161,7 +161,7 @@ steps:
 
 - 先把项目代码拷贝到本地
 ```shell
-$ git clone https://github.com/lddsb/drone-dingtalk-message.git /path/to/you/want
+$ git clone https://github.com/javachen/drone-dingtalk-message.git /path/to/you/want
 ```
 - 然后直接执行编译即可
 ```shell

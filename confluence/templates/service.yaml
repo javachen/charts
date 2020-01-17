@@ -27,7 +27,7 @@ spec:
       {{- if $nodePort.ports.http.nodePort }}
       nodePort: {{ $nodePort.ports.http.nodePort }}
       {{- end }}
-{{- else if eq .Values.expose.type "LoadBalancer" }}
+{{- else if eq .Values.expose.type "loadBalancer" }}
 {{- $loadBalancer := .Values.expose.loadBalancer }}
 spec:
   type: LoadBalancer

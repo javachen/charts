@@ -1,5 +1,4 @@
 {{- if .Values.expose.ingress.enabled -}}
-{{- $fullName := include "app.fullname" . -}}
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:

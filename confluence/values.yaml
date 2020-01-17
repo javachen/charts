@@ -13,7 +13,7 @@ fullnameOverride: ""
 expose:
   # Set the way how to expose the service. Set the type as "ingress","clusterIP","loadBalancer"
   # or "nodePort" and fill the information in the corresponding section
-  type: loadBalancer
+  type: ingress
   ingress:
     enabled: true
     tls:

@@ -15,7 +15,7 @@ expose:
   # or "nodePort" and fill the information in the corresponding section
   type: ingress
   ingress:
-    enabled: false
+    enabled: true
     tls:
       enabled: false
       # Fill the name of secret if you want to use your own TLS certificate

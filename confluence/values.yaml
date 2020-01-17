@@ -13,7 +13,7 @@ fullnameOverride: ""
 expose:
   # Set the way how to expose the service. Set the type as "ingress","clusterIP","loadBalancer"
   # or "nodePort" and fill the information in the corresponding section
-  type: clusterIP
+  type: ingress
   ingress:
     enabled: true
     tls:
@@ -31,28 +31,28 @@ expose:
       nginx.ingress.kubernetes.io/proxy-body-size: "0"
       # kubernetes.io/tls-acme: "true"
   clusterIP:
-    # The name of ClusterIP service
-    # name: 
     ports:
-      http: 8090
-  nodePort:
-    # name: 
-    ports:
-      http:
+      - name: http
         port: 8090
-        # nodePort: 30003
+        targetPort: 8090
+  nodePort:
+    ports:
+      - name: http
+        port: 8090
+        targetPort: 8090
+        #nodePort: 38090
   loadBalancer:
     annotations: []
-    # The name of LoadBalancer service
-    # name: 
     ports:
-      http: 8090
+      - name: http
+        port: 8090
+        targetPort: 8090
 
 
 ## Enable persistence using Persistent Volume Claims
 ## ref: http://kubernetes.io/docs/user-guide/persistent-volumes/
 persistence:
-  enabled: false
+  enabled: true
 
   ## A manually managed Persistent Volume and Claim
   ## Requires persistence.enabled: true
@@ -66,7 +66,7 @@ persistence:
   ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
   ##   GKE, AWS & OpenStack)
   ##
-  # storageClass: "-"
+  storageClass: "ceph-rbd"
   accessMode: ReadWriteOnce
   size: 1Gi
 

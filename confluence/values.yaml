@@ -14,17 +14,17 @@ expose:
   # Set the way how to expose the service. Set the type as "ingress","clusterIP","loadBalancer"
   # or "nodePort" and fill the information in the corresponding section
   type: ingress
-  tls:
-    enabled: false
-    # Fill the name of secret if you want to use your own TLS certificate
-    # and private key. The secret must contain keys named tls.crt and
-    # tls.key that contain the certificate and private key to use for TLS
-    # The certificate and private key will be generated automatically if
-    # it is not set
-    secretName: ""
   ingress:
     enabled: false
-    host: confluence.cluster.local
+    tls:
+      enabled: false
+      # Fill the name of secret if you want to use your own TLS certificate
+      # and private key. The secret must contain keys named tls.crt and
+      # tls.key that contain the certificate and private key to use for TLS
+      # The certificate and private key will be generated automatically if
+      # it is not set
+      secretName: ""
+    host: confluence.example.com
     annotations:
       kubernetes.io/ingress.class: nginx
       nginx.ingress.kubernetes.io/ssl-redirect: "true"
@@ -32,11 +32,11 @@ expose:
       # kubernetes.io/tls-acme: "true"
   clusterIP:
     # The name of ClusterIP service
-    # name: gitea
+    # name: 
     ports:
       http: 8090
   nodePort:
-    # name: gitea
+    # name: 
     ports:
       http:
         port: 8090
@@ -44,7 +44,7 @@ expose:
   loadBalancer:
     annotations: []
     # The name of LoadBalancer service
-    # name: gitea
+    # name: 
     ports:
       http: 8090
 

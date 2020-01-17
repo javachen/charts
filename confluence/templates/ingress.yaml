@@ -11,11 +11,11 @@ metadata:
   labels:
 {{ include "app.labels" . | indent 4 }}
 spec:
-  {{- if .Values.expose.tls.enabled }}
+  {{- if .Values.expose.ingress.tls.enabled }}
   tls:
   - hosts:
     - {{.Values.expose.ingress.host}}
-    secretName: {{.Values.expose.tls.secretName}}
+    secretName: {{.Values.expose.ingress.tls.secretName}}
   {{- end }}
   rules:
   - host: {{.Values.expose.ingress.host}}

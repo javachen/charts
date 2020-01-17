@@ -18,13 +18,14 @@ Confluence是专业的企业知识管理与协同工具，可用于构建企业w
 部署：
 
 ```bash
-$ helm install confluence ./confluence
+kubectl create namespace confluence
+helm install confluence -n confluence ./confluence
 ```
 
 或者，可以在安装chart时提供指定values.yaml文件：
 
 ```bash
-$ helm install my-release -f values.yaml ./confluence
+$ helm install confluence -n confluence -f values.yaml ./confluence
 ```
 
 > **Tip**: 使用 `helm list`列出所有release。

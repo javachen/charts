@@ -4,7 +4,7 @@
 replicaCount: 1
 
 image:
-  repository: atlassian/jira-software:8.3.3
+  repository: atlassian/jira-software:8.4.1
   pullPolicy: IfNotPresent
 
 nameOverride: ""

@@ -12,8 +12,7 @@ fullnameOverride: ""
 
 expose:
   # Set the way how to expose the service. Set the type as "ingress","clusterIP","LoadBalancer"
-  # or "nodePort" and fill the information in the corresponding
-  # section
+  # or "nodePort" and fill the information in the corresponding section
   type: ingress
   tls:
     enabled: false
@@ -25,7 +24,7 @@ expose:
     secretName: ""
   ingress:
     enabled: false
-    host: gitea.cluster.local
+    host: confluence.cluster.local
     annotations:
       kubernetes.io/ingress.class: nginx
       nginx.ingress.kubernetes.io/ssl-redirect: "true"
@@ -35,29 +34,23 @@ expose:
     # The name of ClusterIP service
     # name: gitea
     ports:
-      # The service port gitea listens on when serving with HTTP
       http: 8090
   nodePort:
-    # The name of NodePort service
     # name: gitea
     ports:
       http:
-        # The service port gitea listens on when serving with HTTP
         port: 8090
-        # The node port gitea listens on when serving with HTTP
         # nodePort: 30003
   loadBalancer:
     annotations: []
     # The name of LoadBalancer service
     # name: gitea
     ports:
-      # The service port gitea listens on when serving with HTTP
       http: 8090
 
 
 ## Enable persistence using Persistent Volume Claims
 ## ref: http://kubernetes.io/docs/user-guide/persistent-volumes/
-##
 persistence:
   enabled: false
 

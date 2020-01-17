@@ -18,7 +18,7 @@ volume 必须配置.发布方式有2种,第一种是 ingress,第二种是 lb svc
 
 ### ingress 安装方式
 
-```
+```bash
 helm install \
 --set expose.ingress.host=www.zeusro.tech \
 --set expose.type=ingress \

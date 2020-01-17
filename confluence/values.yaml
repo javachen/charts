@@ -13,7 +13,7 @@ fullnameOverride: ""
 expose:
   # Set the way how to expose the service. Set the type as "ingress","clusterIP","loadBalancer"
   # or "nodePort" and fill the information in the corresponding section
-  type: ingress
+  type: loadBalancer
   ingress:
     enabled: true
     tls:
@@ -52,7 +52,7 @@ expose:
 ## Enable persistence using Persistent Volume Claims
 ## ref: http://kubernetes.io/docs/user-guide/persistent-volumes/
 persistence:
-  enabled: true
+  enabled: false
 
   ## A manually managed Persistent Volume and Claim
   ## Requires persistence.enabled: true
@@ -66,9 +66,9 @@ persistence:
   ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
   ##   GKE, AWS & OpenStack)
   ##
-  storageClass: "ceph-rbd"
+  # storageClass: "-"
   accessMode: ReadWriteOnce
-  size: 1Gi
+  size: 5Gi
 
 extraContainers: |
 

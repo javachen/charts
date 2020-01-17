@@ -22,7 +22,7 @@ spec:
 spec:
   type: NodePort
   ports:
-{{- with $clusterIP.ports }}
+{{- with $nodePort.ports }}
 {{ toYaml . | indent 4 }}
 {{- end }}
 {{- else if eq .Values.expose.type "loadBalancer" }}
@@ -31,7 +31,7 @@ spec:
   type: LoadBalancer
   externalTrafficPolicy: Local
   ports:
-{{- with $clusterIP.ports }}
+{{- with $loadBalancer.ports }}
 {{ toYaml . | indent 4 }}
 {{- end }}
 {{- end }}

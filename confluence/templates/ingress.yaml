@@ -2,7 +2,7 @@
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  name: {{.Values.expose.ingress.host}}
+  name:  {{ template "app.fullname" . }}
   annotations:
   {{- range $key, $value := .Values.expose.ingress.annotations }}
     {{ $key }}: {{ $value | quote }}

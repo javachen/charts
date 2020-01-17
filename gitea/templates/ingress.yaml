@@ -1,9 +1,8 @@
 {{- if .Values.expose.ingress.enabled -}}
-{{- $fullName := include "app.fullname" . -}}
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  name: {{.Values.expose.ingress.host}}
+  name:  {{ template "app.fullname" . }}
   annotations:
   {{- range $key, $value := .Values.expose.ingress.annotations }}
     {{ $key }}: {{ $value | quote }}
@@ -11,11 +10,11 @@ metadata:
   labels:
 {{ include "app.labels" . | indent 4 }}
 spec:
-  {{- if .Values.expose.tls.enabled }}
+  {{- if .Values.expose.ingress.tls.enabled }}
   tls:
   - hosts:
     - {{.Values.expose.ingress.host}}
-    secretName: {{.Values.expose.tls.secretName}}
+    secretName: {{.Values.expose.ingress.tls.secretName}}
   {{- end }}
   rules:
   - host: {{.Values.expose.ingress.host}}

@@ -4,10 +4,7 @@
 replicaCount: 1
 
 image:
-  ## The official gitea image, change tag to use a different version.
-  ## ref: https://hub.docker.com/r/gitea/gitea/tags/
-  ##
-  repository: gitea/gitea
+  repository: atlassian/confluence-server:6.15.9-alpine
   pullPolicy: IfNotPresent
 
 nameOverride: ""
@@ -38,22 +35,15 @@ expose:
     # The name of ClusterIP service
     # name: gitea
     ports:
-      # The service port gitea listens on when serving with SSH
-      ssh: 22
       # The service port gitea listens on when serving with HTTP
-      http: 80
+      http: 8090
   nodePort:
     # The name of NodePort service
     # name: gitea
     ports:
-      ssh:
-        # The service port gitea listens on when serving with SSH
-        port: 22
-        # The node port gitea listens on when serving with SSH
-        # nodePort: 30002
       http:
         # The service port gitea listens on when serving with HTTP
-        port: 80
+        port: 8090
         # The node port gitea listens on when serving with HTTP
         # nodePort: 30003
   loadBalancer:
@@ -61,10 +51,8 @@ expose:
     # The name of LoadBalancer service
     # name: gitea
     ports:
-      # The service port gitea listens on when serving with SSH
-      ssh: 22
       # The service port gitea listens on when serving with HTTP
-      http: 80
+      http: 8090
 
 
 ## Enable persistence using Persistent Volume Claims
@@ -92,12 +80,11 @@ persistence:
 extraContainers: |
 
 ## additional volumes, e. g. for secrets used in an extraContainers.
-##
 extraVolumes: |
 
 securityContext: {}
   #runAsUser: 0
-  
+
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
   # choice for the user. This also increases chances charts run on environments with little

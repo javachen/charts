@@ -1,0 +1,16 @@
+{{- if .Values.service.enabled -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}
+  labels:
+{{ include "jira.labels" . | indent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - name: http
+      port: {{ .Values.container.httpPort }}
+      protocol: TCP
+  selector:
+{{ include "jira.selectorLabels" . | indent 4 }}
+{{- end }}

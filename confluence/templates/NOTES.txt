@@ -1,3 +1,4 @@
+
 Get the application URL by running these commands:
 {{- if contains "ingress" .Values.expose.type  }}
   http{{ if $.Values.expose.ingress.tls.enabled }}s{{ end }}://{{ .Values.expose.ingress.host }}
@@ -12,6 +13,6 @@ Get the application URL by running these commands:
   echo http://$SERVICE_IP:{{ .Values.expose.loadBalancer.port }}
 {{- else if contains "clusterIP" .Values.expose.type }}
   export POD_NAME=$(kubectl get pods --namespace {{ .Release.Namespace }} -l "app.kubernetes.io/name={{ include "app.name" . }},app.kubernetes.io/instance={{ .Release.Name }}" -o jsonpath="{.items[0].metadata.name}")
-  echo "Visit http://127.0.0.1:{{ .Values.expose.clusterIP.port }} to use your application"
-  kubectl --namespace {{ .Release.Namespace }} port-forward $POD_NAME {{ .Values.expose.clusterIP.port }}:80
+  kubectl --namespace {{ .Release.Namespace }} port-forward $POD_NAME {{ .Values.expose.clusterIP.ports.http }}:{{ .Values.expose.clusterIP.ports.http }}
+  echo "Visit http://127.0.0.1:{{ .Values.expose.clusterIP.ports.http }} to use your application"
 {{- end }}

@@ -30,4 +30,3 @@ Get the URL by running:
   echo http://127.0.0.1:8000/
   kubectl -n {{ .Release.Namespace }} port-forward $POD_NAME 8000:80
 {{- end }}
-{{- else -}}

@@ -1,27 +1,34 @@
-{{- if .Values.expose.ingress.enabled -}}
+{{- $ingress := .Values.ingress -}}
+{{- if $ingress.enabled -}}
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name:  {{ template "app.fullname" . }}
+{{- with $ingress.annotations }}
   annotations:
-  {{- range $key, $value := .Values.expose.ingress.annotations }}
-    {{ $key }}: {{ $value | quote }}
-  {{- end }}
+{{ toYaml . | indent 4 }}
+{{- end }}
   labels:
 {{ include "app.labels" . | indent 4 }}
 spec:
-  {{- if .Values.expose.ingress.tls.enabled }}
+{{- if $ingress.tls }}
   tls:
-  - hosts:
-    - {{.Values.expose.ingress.host}}
-    secretName: {{.Values.expose.ingress.tls.secretName}}
+  {{- range $ingress.tls }}
+    - hosts:
+      {{- range .hosts }}
+        - {{ . }}
+      {{- end }}
+      secretName: {{ .secretName }}
   {{- end }}
-  rules:
-  - host: {{.Values.expose.ingress.host}}
-    http:
-      paths:
-      - backend:
-          serviceName: {{ template "app.fullname" . }}
-          servicePort: http
-        path: /
 {{- end }}
+  rules:
+  {{- range $ingress.hosts }}
+    - host: {{ . }}
+      http:
+        paths:
+          - path: {{ $ingress.path }}
+            backend:
+              serviceName: {{ template "app.fullname" $ }}
+              servicePort: http
+  {{- end }}
+{{- end -}}

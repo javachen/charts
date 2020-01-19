@@ -1,40 +1,28 @@
+{{- $service := .Values.service -}}
 apiVersion: v1
 kind: Service
 metadata:
   name: {{ template "app.fullname" . }}
-  {{- with .Values.expose.loadBalancer.annotations }}
+{{- with $service.annotations }}
   annotations:
-    {{- toYaml . | indent 4 }}
-  {{- end }}
+{{ toYaml . | indent 4 }}
+{{- end }}
   labels:
 {{ include "app.labels" . | indent 4 }}
-{{- if or (eq .Values.expose.type "clusterIP") (eq .Values.expose.type "ingress") }}
-{{- $clusterIP := .Values.expose.clusterIP }}
-spec:
-  type: ClusterIP
-  ports:
-{{- with $clusterIP.ports }}
+{{- with $service.labels }}
 {{ toYaml . | indent 4 }}
 {{- end }}
 
-{{- else if eq .Values.expose.type "nodePort" }}
-{{- $nodePort := .Values.expose.nodePort }}
 spec:
-  type: NodePort
+  type: {{ $service.type }}
   ports:
-{{- with $nodePort.ports }}
-{{ toYaml . | indent 4 }}
-{{- end }}
-{{- else if eq .Values.expose.type "loadBalancer" }}
-{{- $loadBalancer := .Values.expose.loadBalancer }}
-spec:
-  type: LoadBalancer
-  externalTrafficPolicy: Local
-  ports:
-{{- with $loadBalancer.ports }}
-{{ toYaml . | indent 4 }}
-{{- end }}
-{{- end }}
+    - name: http
+      port: {{ $service.port }}
+      targetPort: http
+    {{- if and (eq "NodePort" $service.type) $service.nodePort }}
+      nodePort: {{ $service.nodePort }}
+    {{- end }}
+      protocol: TCP
   selector:
-    app.kubernetes.io/name: {{ include "app.name" . }}
-    app.kubernetes.io/instance: {{ .Release.Name }}
+    app: {{ template "app.name" . }}
+    release: "{{ .Release.Name }}"

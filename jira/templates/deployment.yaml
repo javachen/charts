@@ -6,7 +6,6 @@ metadata:
 {{ include "app.labels" . | indent 4 }}
 spec:
   replicas: {{ .Values.replicas }}
-  serviceName: {{ template "app.fullname" . }}
   selector:
     matchLabels:
 {{ include "app.labels" . | indent 6 }}

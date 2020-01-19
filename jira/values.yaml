@@ -54,6 +54,7 @@ ingress:
   #     - jira.example.com
   #   secretName: tls-jira
 
+basepath: ""
 containerPort: 8080
 
 extraContainers: |

@@ -1,0 +1,21 @@
+image:
+  tag: 1.3.0
+
+tls:
+  enabled: false
+  secret: "" 
+  
+env:
+  LDAP_ORGANISATION: "JavaChen Inc."
+  LDAP_DOMAIN: "javachen.com"
+  LDAP_BACKEND: "hdb"
+  LDAP_TLS: "true"
+  LDAP_TLS_ENFORCE: "false"
+  LDAP_REMOVE_CONFIG_AFTER_SETUP: "true"  
+ 
+adminPassword: admin123
+configPassword: admin123
+
+persistence:
+  enabled: true
+  storageClass: "ceph-rbd"

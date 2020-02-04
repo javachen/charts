@@ -1,8 +1,8 @@
-Keycloak can be accessed:
+{{ template "app.fullname" . }} can be accessed:
 
 * Within your cluster, at the following DNS name at port {{ .Values.service.port }}:
 
-  {{ template "app.fullname" . }}-http.{{ .Release.Namespace }}.svc.cluster.local
+  {{ template "app.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local
 
 {{- if .Values.ingress.enabled }}
 
@@ -34,8 +34,8 @@ Keycloak can be accessed:
 {{- else if contains "ClusterIP" .Values.service.type }}
 
   export POD_NAME=$(kubectl get pods --namespace {{ .Release.Namespace }} -l app={{ template "app.name" . }},release={{ .Release.Name }} -o jsonpath="{.items[0].metadata.name}")
-  echo "Visit http://127.0.0.1:8080 to use Keycloak"
-  kubectl port-forward --namespace {{ .Release.Namespace }} $POD_NAME 8080
+  echo "Visit http://127.0.0.1:{{ .Values.containerPort }} to use {{ template "app.fullname" . }}"
+  kubectl port-forward --namespace {{ .Release.Namespace }} $POD_NAME {{ .Values.containerPort }}
 
 {{- end }}
 

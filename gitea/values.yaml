@@ -1,64 +1,110 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-replicaCount: 1
+replicas: 1
 
 image:
   repository: gitea/gitea
   pullPolicy: IfNotPresent
+  ## Optionally specify an array of imagePullSecrets.
+  ## Secrets must be manually created in the namespace.
+  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+  pullSecrets: []
+  # - myRegistrKeySecretName
 
 nameOverride: ""
 fullnameOverride: ""
 
-expose:
-  # Set the way how to expose the service. Set the type as "ingress","clusterIP","loadBalancer"
-  # or "nodePort" and fill the information in the corresponding
-  # section
-  type: ingress
-  ingress:
-    enabled: false
-    tls:
-      enabled: false
-      # Fill the name of secret if you want to use your own TLS certificate
-      # and private key. The secret must contain keys named tls.crt and
-      # tls.key that contain the certificate and private key to use for TLS
-      # The certificate and private key will be generated automatically if
-      # it is not set
-      secretName: ""
-    host: gitea.example.com
-    annotations:
-      kubernetes.io/ingress.class: nginx
-      nginx.ingress.kubernetes.io/ssl-redirect: "true"
-      nginx.ingress.kubernetes.io/proxy-body-size: "0"
-      # kubernetes.io/tls-acme: "true"
-  clusterIP:
-    ports:
-      - name: http
-        port: 80
-        targetPort: 80
-      - name: ssh
-        port: 22
-        targetPort: 22
-  nodePort:
-    ports:
-      - name: http
-        port: 80
-        targetPort: 80
-        # nodePort: 30022
-      - name: ssh
-        port: 22
-        targetPort: 22
-        # nodePort: 30022
-  loadBalancer:
-    annotations: []
-    ports:
-      - name: http
-        port: 80
-        targetPort: 80
-      - name: ssh
-        port: 22
-        targetPort: 22
+service:
+  annotations: {}
+  # service.beta.kubernetes.io/aws-load-balancer-internal: "0.0.0.0/0"
 
+  labels: {}
+  # key: value
+
+  ## ServiceType
+  ## ref: https://kubernetes.io/docs/user-guide/services/#publishing-services---service-types
+  type: ClusterIP
+
+  ## Optional static port assignment for service type NodePort.
+  # nodePort: 30000
+  port: 3000
+
+## Ingress configuration.
+## ref: https://kubernetes.io/docs/user-guide/ingress/
+ingress:
+  enabled: false
+  path: /
+
+  annotations: 
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: "0"
+    # kubernetes.io/tls-acme: "true"
+    # ingress.kubernetes.io/affinity: cookie
+
+  ## List of hosts for the ingress
+  hosts:
+    - gitea.example.com
+
+  ## TLS configuration
+  tls: []
+  # - hosts:
+  #     - gitea.example.com
+  #   secretName: tls-gitea
+
+basepath: ""
+containerPort: 3000
+## Add additional ports, eg. for custom admin console
+extraPorts: 
+  - name: ssh
+    containerPort: 22
+    protocol: TCP
+
+extraContainers: |
+
+mountPath: /data
+## Add additional volumes and mounts, e. g. 
+extraVolumes: |
+extraVolumeMounts: |
+
+hostAliases: []
+#  - ip: "1.2.3.4"
+#    hostnames:
+#      - "my.host.com"
+
+securityContext: 
+  runAsUser: 0
+  fsGroup: 0
+  runAsNonRoot: false
+
+## Additional pod labels
+## ref: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
+podLabels: {}
+
+## Extra Annotations to be added to pod
+podAnnotations: {}
+
+
+resources: {}
+  # limits:
+  #   cpu: "100m"
+  #   memory: "1024Mi"
+  # requests:
+  #   cpu: "100m"
+  #   memory: "1024Mi"
+
+nodeSelector: {}
+priorityClassName: ""
+tolerations: []
+affinity: {}
+
+livenessProbe:
+  initialDelaySeconds: 120
+  timeoutSeconds: 5
+readinessProbe:
+  initialDelaySeconds: 30
+  timeoutSeconds: 1
 
 ## Enable persistence using Persistent Volume Claims
 ## ref: http://kubernetes.io/docs/user-guide/persistent-volumes/
@@ -79,31 +125,4 @@ persistence:
   ##
   # storageClass: "-"
   accessMode: ReadWriteOnce
-  size: 1Gi
-
-extraContainers: |
-
-## additional volumes, e. g. for secrets used in an extraContainers.
-##
-extraVolumes: |
-
-securityContext: {}
-  #runAsUser: 0
-  
-resources: {}
-  # We usually recommend not to specify default resources and to leave this as a conscious
-  # choice for the user. This also increases chances charts run on environments with little
-  # resources, such as Minikube. If you do want to specify resources, uncomment the following
-  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-  # limits:
-  #  cpu: 100m
-  #  memory: 128Mi
-  # requests:
-  #  cpu: 100m
-  #  memory: 128Mi
-
-nodeSelector: {}
-
-tolerations: []
-
-affinity: {}
+  size: 5Gi

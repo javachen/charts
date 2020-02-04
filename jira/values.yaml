@@ -9,7 +9,6 @@ image:
   ## Optionally specify an array of imagePullSecrets.
   ## Secrets must be manually created in the namespace.
   ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
-  ##
   pullSecrets: []
   # - myRegistrKeySecretName
 
@@ -56,15 +55,15 @@ ingress:
 
 basepath: ""
 containerPort: 8080
-
+## Add additional ports, eg. for custom admin console
+extraPorts: |
 extraContainers: |
 
+
+mountPath: /var/atlassian/application-data/jira
 ## Add additional volumes and mounts, e. g. 
 extraVolumes: |
 extraVolumeMounts: |
-
-## Add additional ports, eg. for custom admin console
-extraPorts: |
 
 hostAliases: []
 #  - ip: "1.2.3.4"
@@ -75,6 +74,14 @@ securityContext:
   runAsUser: 0
   fsGroup: 0
   runAsNonRoot: false
+
+## Additional pod labels
+## ref: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
+podLabels: {}
+
+## Extra Annotations to be added to pod
+podAnnotations: {}
+
 
 resources: {}
   # limits:
@@ -88,13 +95,6 @@ nodeSelector: {}
 priorityClassName: ""
 tolerations: []
 affinity: {}
-
-## Additional pod labels
-## ref: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
-podLabels: {}
-
-## Extra Annotations to be added to pod
-podAnnotations: {}
 
 livenessProbe:
   initialDelaySeconds: 120

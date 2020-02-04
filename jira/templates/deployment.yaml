@@ -39,7 +39,7 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           volumeMounts:
           - name: data
-            mountPath: /var/atlassian/application-data/confluence
+            mountPath: {{ .Values.mountPath }}
 {{- with .Values.extraVolumeMounts }}
 {{ tpl . $ | indent 6 }}
 {{- end }}

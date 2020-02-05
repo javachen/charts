@@ -4,7 +4,7 @@
 replicas: 1
 
 image:
-  repository: atlassian/confluence-server:7.0.4
+  repository: atlassian/confluence-server:7.2.2
   pullPolicy: IfNotPresent
   ## Optionally specify an array of imagePullSecrets.
   ## Secrets must be manually created in the namespace.
@@ -53,7 +53,6 @@ ingress:
   #     - confluence.example.com
   #   secretName: tls-confluence
 
-basepath: ""
 containerPort: 8090
 
 ## Add additional ports, eg. for custom admin console
@@ -97,9 +96,11 @@ tolerations: []
 affinity: {}
 
 livenessProbe:
+  basepath: ""
   initialDelaySeconds: 120
   timeoutSeconds: 5
 readinessProbe:
+  basepath: ""
   initialDelaySeconds: 30
   timeoutSeconds: 1
 

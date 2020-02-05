@@ -4,7 +4,7 @@
 replicas: 1
 
 image:
-  repository: atlassian/jira-software:8.6.1
+  repository: atlassian/jira-software:8.7.0
   pullPolicy: IfNotPresent
   ## Optionally specify an array of imagePullSecrets.
   ## Secrets must be manually created in the namespace.

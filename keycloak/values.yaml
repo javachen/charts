@@ -1,10 +1,23 @@
 init:
   image:
-    repository: alpine
-    tag: 3.8
+    repository: busybox
+    tag: 1.31
     pullPolicy: IfNotPresent
+  resources: {}
+    # limits:
+    #   cpu: "10m"
+    #   memory: "32Mi"
+    # requests:
+    #   cpu: "10m"
+    #   memory: "32Mi"
 
 clusterDomain: cluster.local
+
+## Optionally override the fully qualified name
+# fullnameOverride: keycloak
+
+## Optionally override the name
+# nameOverride: keycloak
 
 keycloak:
   replicas: 1
@@ -26,9 +39,22 @@ keycloak:
   #    hostnames:
   #      - "my.host.com"
 
+  enableServiceLinks: false
+
+  restartPolicy: Always
+
+  serviceAccount:
+    # Specifies whether a service account should be created
+    create: false
+    # The name of the service account to use.
+    # If not set and create is true, a name is generated using the fullname template
+    name:
+
   securityContext:
-    runAsUser: 1000
     fsGroup: 1000
+
+  containerSecurityContext:
+    runAsUser: 1000
     runAsNonRoot: true
 
   ## The path keycloak will be served from. To serve keycloak from the root path, use two quotes (e.g. "").
@@ -39,9 +65,6 @@ keycloak:
 
   ## Additional sidecar containers, e. g. for a database proxy, such as Google's cloudsql-proxy
   extraContainers: |
-
-  ## Custom script that is run before Keycloak is started.
-  preStartScript:
 
   ## lifecycleHooks defines the container lifecycle hooks
   lifecycleHooks: |
@@ -65,8 +88,16 @@ keycloak:
   # The key in the existing secret that stores the password
   existingSecretKey: password
 
+  ## jGroups configuration (only for HA deployment)
+  jgroups:
+    discoveryProtocol: dns.DNS_PING
+    discoveryProperties: >
+      "dns_query={{ template "keycloak.fullname" . }}-headless.{{ .Release.Namespace }}.svc.{{ .Values.clusterDomain }}"
+
   ## Allows the specification of additional environment variables for Keycloak
   extraEnv: |
+    - name: PROXY_ADDRESS_FORWARDING
+      value: "true"
     # - name: KEYCLOAK_LOGLEVEL
     #   value: DEBUG
     # - name: WILDFLY_LOGLEVEL
@@ -85,8 +116,7 @@ keycloak:
       requiredDuringSchedulingIgnoredDuringExecution:
         - labelSelector:
             matchLabels:
-              app:  {{ template "keycloak.name" . }}
-              release: "{{ .Release.Name }}"
+              {{- include "keycloak.selectorLabels" . | nindent 10 }}
             matchExpressions:
               - key: role
                 operator: NotIn
@@ -98,8 +128,7 @@ keycloak:
           podAffinityTerm:
             labelSelector:
               matchLabels:
-                app:  {{ template "keycloak.name" . }}
-                release: "{{ .Release.Name }}"
+                {{- include "keycloak.selectorLabels" . | nindent 12 }}
               matchExpressions:
                 - key: role
                   operator: NotIn
@@ -118,10 +147,16 @@ keycloak:
   ## Extra Annotations to be added to pod
   podAnnotations: {}
 
-  livenessProbe:
-    initialDelaySeconds: 120
+  livenessProbe: |
+    httpGet:
+      path: {{ if ne .Values.keycloak.basepath "" }}/{{ .Values.keycloak.basepath }}{{ end }}/
+      port: http
+    initialDelaySeconds: 300
     timeoutSeconds: 5
-  readinessProbe:
+  readinessProbe: |
+    httpGet:
+      path: {{ if ne .Values.keycloak.basepath "" }}/{{ .Values.keycloak.basepath }}{{ end }}/realms/master
+      port: http
     initialDelaySeconds: 30
     timeoutSeconds: 1
 
@@ -136,14 +171,12 @@ keycloak:
   ## WildFly CLI configurations. They all end up in the file 'keycloak.cli' configured in the configmap which is
   ## executed on server startup.
   cli:
+    enabled: true
     nodeIdentifier: |
       {{ .Files.Get "scripts/node-identifier.cli" }}
 
     logging: |
       {{ .Files.Get "scripts/logging.cli" }}
-
-    reverseProxy: |
-      {{ .Files.Get "scripts/reverse-proxy.cli" }}
 
     ha: |
       {{ .Files.Get "scripts/ha.cli" }}
@@ -153,6 +186,13 @@ keycloak:
 
     # Custom CLI script
     custom: |
+
+  ## Custom startup scripts to run before Keycloak starts up
+  startupScripts: {}
+    # mystartup.sh: |
+    #   #!/bin/sh
+    #
+    #   echo 'Hello from my custom startup script!'
 
   ## Add additional volumes and mounts, e. g. for custom themes
   extraVolumes: |
@@ -179,7 +219,11 @@ keycloak:
     ## Optional static port assignment for service type NodePort.
     # nodePort: 30000
 
-    port: 80
+    httpPort: 80
+    httpNodePort: ""
+
+    httpsPort: 8443
+    httpsNodePort: ""
 
     # Optional: jGroups port for high availability clustering
     jgroupsPort: 7600
@@ -195,6 +239,9 @@ keycloak:
       # kubernetes.io/tls-acme: "true"
       # ingress.kubernetes.io/affinity: cookie
 
+    labels: {}
+    # key: value
+
     ## List of hosts for the ingress
     hosts:
       - keycloak.example.com
@@ -204,6 +251,29 @@ keycloak:
     # - hosts:
     #     - keycloak.example.com
     #   secretName: tls-keycloak
+
+  ## OpenShift route configuration.
+  ## ref: https://docs.openshift.com/container-platform/3.11/architecture/networking/routes.html
+  route:
+    enabled: false
+    path: /
+
+    annotations: {}
+      # kubernetes.io/tls-acme: "true"
+      # haproxy.router.openshift.io/disable_cookies: "true"
+      # haproxy.router.openshift.io/balance: roundrobin
+
+    labels: {}
+      # key: value
+
+    # Host name for the route
+    host:
+
+    # TLS configuration
+    tls:
+      enabled: true
+      insecureEdgeTerminationPolicy: Redirect
+      termination: edge
 
   ## Persistence configuration
   persistence:
@@ -232,16 +302,16 @@ keycloak:
 postgresql:
   ### PostgreSQL User to create.
   ##
-  postgresUser: keycloak
+  postgresqlUsername: keycloak
 
   ## PostgreSQL Password for the new user.
   ## If not set, a random 10 characters password will be used.
   ##
-  postgresPassword: ""
+  postgresqlPassword: ""
 
   ## PostgreSQL Database to create.
   ##
-  postgresDatabase: keycloak
+  postgresqlDatabase: keycloak
 
   ## Persistent Volume Storage configuration.
   ## ref: https://kubernetes.io/docs/user-guide/persistent-volumes
@@ -258,6 +328,54 @@ test:
     tag: v1
     pullPolicy: IfNotPresent
   securityContext:
-    runAsUser: 1000
     fsGroup: 1000
+  containerSecurityContext:
+    runAsUser: 1000
     runAsNonRoot: true
+
+prometheus:
+  operator:
+    ## Are you using Prometheus Operator?
+    enabled: false
+
+    serviceMonitor:
+      ## Additional labels to add to the ServiceMonitor so it is picked up by the operator.
+      ## If using the [Helm Chart](https://github.com/helm/charts/tree/master/stable/prometheus-operator) this is the name of the Helm release.
+      selector:
+        release: prometheus
+
+      ## Interval at which Prometheus scrapes metrics
+      interval: 10s
+
+      ## Timeout at which Prometheus timeouts scrape run
+      scrapeTimeout: 10s
+
+      ## The path to scrape
+      path: /auth/realms/master/metrics
+
+    prometheusRules:
+      ## Add Prometheus Rules?
+      enabled: false
+
+      ## Additional labels to add to the PrometheusRule so it is picked up by the operator.
+      ## If using the [Helm Chart](https://github.com/helm/charts/tree/master/stable/prometheus-operator) this is the name of the Helm release and 'app: prometheus-operator'
+      selector:
+        app: prometheus-operator
+        release: prometheus
+
+      ## Some example rules.
+      rules: {}
+      #  - alert: keycloak-IngressHigh5xxRate
+      #    annotations:
+      #      message: The percentage of 5xx errors for keycloak over the last 5 minutes is over 1%.
+      #    expr: (sum(rate(nginx_ingress_controller_response_duration_seconds_count{exported_namespace="mynamespace",ingress="mynamespace-keycloak",status=~"5[0-9]{2}"}[1m]))/sum(rate(nginx_ingress_controller_response_duration_seconds_count{exported_namespace="mynamespace",ingress="mynamespace-keycloak"}[1m])))*100 > 1
+      #    for: 5m
+      #    labels:
+      #      severity: warning
+      #  - alert: keycloak-IngressHigh5xxRate
+      #    annotations:
+      #      message: The percentage of 5xx errors for keycloak over the last 5 minutes is over 5%.
+      #    expr: (sum(rate(nginx_ingress_controller_response_duration_seconds_count{exported_namespace="mynamespace",ingress="mynamespace-keycloak",status=~"5[0-9]{2}"}[1m]))/sum(rate(nginx_ingress_controller_response_duration_seconds_count{exported_namespace="mynamespace",ingress="mynamespace-keycloak"}[1m])))*100 > 5
+      #    for: 5m
+      #    labels:
+      #      severity: critical

@@ -1,0 +1,8 @@
+apiVersion: v2
+name: keycloak
+version: 8.0.1
+appVersion: 8.0.1
+description: Open Source Identity and Access Management For Modern Applications and Services
+icon: https://www.keycloak.org/resources/images/keycloak_logo_480x108.png
+sources:
+  - https://github.com/jboss-dockerfiles/keycloak

@@ -21,12 +21,10 @@ clusterDomain: cluster.local
 
 keycloak:
   replicas: 1
-
-  image:
+  image: 
     repository: jboss/keycloak
     tag: 8.0.1
     pullPolicy: IfNotPresent
-
     ## Optionally specify an array of imagePullSecrets.
     ## Secrets must be manually created in the namespace.
     ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/

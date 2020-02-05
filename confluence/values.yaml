@@ -5,7 +5,7 @@ replicas: 1
 
 image:
   repository: atlassian/confluence-server:7.2.2
-  pullPolicy: IfNotPresent
+  pullPolicy: always
   ## Optionally specify an array of imagePullSecrets.
   ## Secrets must be manually created in the namespace.
   ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
@@ -96,7 +96,7 @@ tolerations: []
 affinity: {}
 
 probe:
-  enabled: true
+  enabled: false
   type: httpGet
   tcpSocket:
     port: 8090
@@ -104,13 +104,13 @@ probe:
     path: /
     port: 8090
   livenessProbe:
-    initialDelaySeconds: 120
+    initialDelaySeconds: 90
     timeoutSeconds: 30
-    periodSeconds: 30
+    periodSeconds: 5
   readinessProbe:
-    initialDelaySeconds: 300
+    initialDelaySeconds: 90
     timeoutSeconds: 30
-    periodSeconds: 30
+    periodSeconds: 5
 
 ## Enable persistence using Persistent Volume Claims
 ## ref: http://kubernetes.io/docs/user-guide/persistent-volumes/

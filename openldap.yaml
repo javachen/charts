@@ -6,15 +6,15 @@ tls:
   secret: "" 
   
 env:
-  LDAP_ORGANISATION: "JavaChen Inc."
-  LDAP_DOMAIN: "javachen.com"
+  LDAP_ORGANISATION: "Wesine"
+  LDAP_DOMAIN: "wesine.com"
   LDAP_BACKEND: "hdb"
   LDAP_TLS: "true"
   LDAP_TLS_ENFORCE: "false"
   LDAP_REMOVE_CONFIG_AFTER_SETUP: "true"  
  
-adminPassword: admin123
-configPassword: admin123
+adminPassword: admin
+configPassword: conifg
 
 persistence:
   enabled: true

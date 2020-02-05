@@ -54,11 +54,11 @@ spec:
           livenessProbe:
 {{- if eq .Values.probe.type "httpGet" }}
             httpGet:
-{{ toYaml .Values.probe.httpGet | indent 12 }}
+{{ toYaml .Values.probe.httpGet | indent 14 }}
 {{- end }}
 {{- if eq .Values.probe.type "tcpSocket" }}
             tcpSocket:
-{{ toYaml .Values.probe.tcpSocket | indent 12 }}
+{{ toYaml .Values.probe.tcpSocket | indent 14 }}
 {{- end }}
             initialDelaySeconds: {{ .Values.probe.livenessProbe.initialDelaySeconds }}
             timeoutSeconds: {{ .Values.probe.livenessProbe.timeoutSeconds }}
@@ -66,11 +66,11 @@ spec:
           readinessProbe:
 {{- if eq .Values.probe.type "httpGet" }}
             httpGet:
-{{ toYaml .Values.probe.httpGet | indent 12 }}
+{{ toYaml .Values.probe.httpGet | indent 14 }}
 {{- end }}
 {{- if eq .Values.probe.type "tcpSocket" }}
             tcpSocket:
-{{ toYaml .Values.probe.tcpSocket | indent 12 }}
+{{ toYaml .Values.probe.tcpSocket | indent 14 }}
 {{- end }}
             initialDelaySeconds: {{ .Values.probe.readinessProbe.initialDelaySeconds }}
             timeoutSeconds: {{ .Values.probe.readinessProbe.timeoutSeconds }}

@@ -95,14 +95,22 @@ priorityClassName: ""
 tolerations: []
 affinity: {}
 
-livenessProbe:
-  basepath: ""
-  initialDelaySeconds: 120
-  timeoutSeconds: 5
-readinessProbe:
-  basepath: ""
-  initialDelaySeconds: 30
-  timeoutSeconds: 1
+probe:
+  enabled: true
+  type: httpGet
+  tcpSocket:
+    port: 8090
+  httpGet:
+    path: /
+    port: 8090
+  livenessProbe:
+    initialDelaySeconds: 120
+    timeoutSeconds: 30
+    periodSeconds: 30
+  readinessProbe:
+    initialDelaySeconds: 300
+    timeoutSeconds: 30
+    periodSeconds: 30
 
 ## Enable persistence using Persistent Volume Claims
 ## ref: http://kubernetes.io/docs/user-guide/persistent-volumes/

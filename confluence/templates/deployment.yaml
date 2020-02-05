@@ -41,7 +41,7 @@ spec:
           - name: data
             mountPath: {{ .Values.mountPath }}
 {{- with .Values.extraVolumeMounts }}
-{{ tpl . $ | indent 6 }}
+{{ tpl . $ | indent 12 }}
 {{- end }}
           ports:
             - name: http
@@ -50,18 +50,32 @@ spec:
 {{- with .Values.extraPorts }}
 {{ tpl . $ | indent 12 }}
 {{- end }}
+        {{- if .Values.probe.enabled }}
           livenessProbe:
+{{- if eq .Values.probe.type "httpGet" }}
             httpGet:
-              path: {{ if ne .Values.livenessProbe.basepath "" }}/{{ .Values.livenessProbe.basepath }}{{ end }}/
-              port: http
-            initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }}
-            timeoutSeconds: {{ .Values.livenessProbe.timeoutSeconds }}
+{{ toYaml .Values.probe.httpGet | indent 12 }}
+{{- end }}
+{{- if eq .Values.probe.type "tcpSocket" }}
+            tcpSocket:
+{{ toYaml .Values.probe.tcpSocket | indent 12 }}
+{{- end }}
+            initialDelaySeconds: {{ .Values.probe.livenessProbe.initialDelaySeconds }}
+            timeoutSeconds: {{ .Values.probe.livenessProbe.timeoutSeconds }}
+            periodSeconds: {{ .Values.probe.livenessProbe.timeoutSeconds }}
           readinessProbe:
+{{- if eq .Values.probe.type "httpGet" }}
             httpGet:
-              path: {{ if ne .Values.readinessProbe.basepath "" }}/{{ .Values.readinessProbe.basepath }}{{ end }}/
-              port: http
-            initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds }}
-            timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds }}
+{{ toYaml .Values.probe.httpGet | indent 12 }}
+{{- end }}
+{{- if eq .Values.probe.type "tcpSocket" }}
+            tcpSocket:
+{{ toYaml .Values.probe.tcpSocket | indent 12 }}
+{{- end }}
+            initialDelaySeconds: {{ .Values.probe.readinessProbe.initialDelaySeconds }}
+            timeoutSeconds: {{ .Values.probe.readinessProbe.timeoutSeconds }}
+            periodSeconds: {{ .Values.probe.readinessProbe.timeoutSeconds }}
+        {{- end }}  
           resources:
 {{ toYaml .Values.resources | indent 12 }}
 {{- with .Values.extraContainers }}

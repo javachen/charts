@@ -52,13 +52,13 @@ spec:
 {{- end }}
           livenessProbe:
             httpGet:
-              path: {{ if ne .Values.basepath "" }}/{{ .Values.basepath }}{{ end }}/
+              path: {{ if ne .Values.livenessProbe.basepath "" }}/{{ .Values.livenessProbe.basepath }}{{ end }}/
               port: http
             initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }}
             timeoutSeconds: {{ .Values.livenessProbe.timeoutSeconds }}
           readinessProbe:
             httpGet:
-              path: {{ if ne .Values.basepath "" }}/{{ .Values.basepath }}{{ end }}/
+              path: {{ if ne .Values.readinessProbe.basepath "" }}/{{ .Values.readinessProbe.basepath }}{{ end }}/
               port: http
             initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds }}
             timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds }}

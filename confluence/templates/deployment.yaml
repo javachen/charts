@@ -38,10 +38,10 @@ spec:
           image: "{{ .Values.image.repository }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           volumeMounts:
-            - name: data
-              mountPath: {{ .Values.mountPath }}
-            - name: confluence-home
-              mountPath: /opt/atlassian/confluence
+          - name: data
+            mountPath: {{ .Values.mountPath }}
+          - name: confluence-home
+            mountPath: /opt/atlassian/confluence
 {{- with .Values.extraVolumeMounts }}
 {{ tpl . $ | indent 12 }}
 {{- end }}

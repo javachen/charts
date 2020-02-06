@@ -105,19 +105,11 @@ spec:
       terminationGracePeriodSeconds: 60
       volumes:
         - name: data
-        {{- if .Values.persistence.enabled }}
           persistentVolumeClaim:
-            claimName: {{ .Values.persistence.existingClaim | default (include "app.fullname" .) }}
-        {{- else }}
-          emptyDir: {}
-        {{- end -}}
+            claimName: confluence
         - name: home
-        {{- if .Values.persistence.enabled }}
           persistentVolumeClaim:
-            claimName: {{ .Values.persistence.existingClaim | default (include "app.fullname" .) }}-home
-        {{- else }}
-          emptyDir: {}
-        {{- end -}}
+            claimName: confluence-home
         {{- with .Values.extraVolumes }}
         {{ tpl . $ | nindent 8 }}
         {{- end }}

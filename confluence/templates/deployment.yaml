@@ -43,7 +43,7 @@ spec:
           {{- end }}
           volumeMounts:
             - name: data
-              mountPath: {{ .Values.mountPath }}
+              mountPath: "/var/atlassian/application-data/confluence"
             - name: home
               mountPath: "/opt/atlassian/confluence"
           {{- with .Values.extraVolumeMounts }}

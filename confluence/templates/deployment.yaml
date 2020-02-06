@@ -45,7 +45,7 @@ spec:
           - name: data
             mountPath: {{ .Values.mountPath }}
           - name: home
-            mountPath: /opt/atlassian/confluence
+            mountPath: "/opt/atlassian/confluence"
           {{- with .Values.extraVolumeMounts }}
           {{ tpl . $ | nindent 10 }}
           {{- end }}

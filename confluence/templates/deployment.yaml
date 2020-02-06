@@ -40,6 +40,8 @@ spec:
           volumeMounts:
           - name: data
             mountPath: {{ .Values.mountPath }}
+          - name: home
+            mountPath: /opt/atlassian/confluence
 {{- with .Values.extraVolumeMounts }}
 {{ tpl . $ | indent 12 }}
 {{- end }}
@@ -99,6 +101,13 @@ spec:
       terminationGracePeriodSeconds: 60
       volumes:
         - name: data
+        {{- if .Values.persistence.enabled }}
+          persistentVolumeClaim:
+            claimName: {{ .Values.persistence.existingClaim | default (include "app.fullname" .) }}
+        {{- else }}
+          emptyDir: {}
+        {{- end -}}
+        - name: home
         {{- if .Values.persistence.enabled }}
           persistentVolumeClaim:
             claimName: {{ .Values.persistence.existingClaim | default (include "app.fullname" .) }}

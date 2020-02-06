@@ -1,0 +1,38 @@
+image:
+  repository: javachen/confluence-server:7.3.1
+ingress:
+  enabled: true
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: 100m
+  hosts:
+    - confluence.wesine.com.cn
+    - confluence.test.wesine.com.cn
+  tls:
+    - secretName: confluence-test-wesine-com-cn-cert
+      hosts:
+        - confluence.wesine.com.cn
+        - confluence.test.wesine.com.cn
+
+
+probe:
+  enabled: false
+
+env: 
+  - name: JVM_MINIMUM_MEMORY
+    value: "3072m"
+  - name: JVM_MAXIMUM_MEMORY
+    value: "4096m"
+  - name: ATL_PROXY_NAME
+    value: confluence.test.wesine.com.cn
+  - name: ATL_PROXY_PORT
+    value: "443"
+  - name: ATL_TOMCAT_SCHEME
+    value: "https"
+
+persistence:
+  enabled: true
+  storageClass: "ceph-rbd"
+  accessMode: ReadWriteOnce
+  size: 5Gi

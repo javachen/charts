@@ -37,10 +37,6 @@ spec:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
-          {{- with .Values.env }}
-          env:
-          {{ toYaml . | nindent 12 }}
-          {{- end }}
           volumeMounts:
             - name: data
               mountPath: "/var/atlassian/application-data/confluence"
@@ -52,11 +48,7 @@ spec:
               protocol: TCP
       volumes:
         - name: data
-        {{- if .Values.persistence.enabled }}
           persistentVolumeClaim:
-            claimName: {{ .Values.persistence.existingClaim | default (include "app.fullname" .) }}
-        {{- else }}
-          emptyDir: {}
-        {{- end -}}
+            claimName: confluence
         - name: home
           emptyDir: {}

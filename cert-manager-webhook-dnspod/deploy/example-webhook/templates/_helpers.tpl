@@ -2,7 +2,7 @@
 {{/*
 Expand the name of the chart.
 */}}
-{{- define "example-webhook.name" -}}
+{{- define "app.name" -}}
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
@@ -11,7 +11,7 @@ Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 If release name contains chart name it will be used as a full name.
 */}}
-{{- define "example-webhook.fullname" -}}
+{{- define "app.fullname" -}}
 {{- if .Values.fullnameOverride -}}
 {{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" -}}
 {{- else -}}
@@ -27,38 +27,26 @@ If release name contains chart name it will be used as a full name.
 {{/*
 Create chart name and version as used by the chart label.
 */}}
-{{- define "example-webhook.chart" -}}
+{{- define "app.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
-{{/*
-Common labels
-*/}}
-{{- define "example-webhook.labels" -}}
-app.kubernetes.io/name: {{ include "example-webhook.name" . }}
-helm.sh/chart: {{ include "example-webhook.chart" . }}
-app.kubernetes.io/instance: {{ .Release.Name }}
-{{- if .Chart.AppVersion }}
-app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
-{{- end }}
-app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- define "app.selfSignedIssuer" -}}
+{{ printf "%s-selfsign" (include "app.fullname" .) }}
 {{- end -}}
 
-{{/*
-PKI
-*/}}
-{{- define "example-webhook.selfSignedIssuer" -}}
-{{ printf "%s-selfsign" (include "example-webhook.fullname" .) }}
+{{- define "app.rootCAIssuer" -}}
+{{ printf "%s-ca" (include "app.fullname" .) }}
 {{- end -}}
 
-{{- define "example-webhook.rootCAIssuer" -}}
-{{ printf "%s-ca" (include "example-webhook.fullname" .) }}
+{{- define "app.rootCACertificate" -}}
+{{ printf "%s-ca" (include "app.fullname" .) }}
 {{- end -}}
 
-{{- define "example-webhook.rootCACertificate" -}}
-{{ printf "%s-ca" (include "example-webhook.fullname" .) }}
+{{- define "app.servingCertificate" -}}
+{{ printf "%s-webhook-tls" (include "app.fullname" .) }}
 {{- end -}}
 
-{{- define "example-webhook.servingCertificate" -}}
-{{ printf "%s-webhook-tls" (include "example-webhook.fullname" .) }}
+{{- define "app.clusterIssuer" -}}
+{{ printf "%s-cluster-issuer" (include "app.fullname" .) }}
 {{- end -}}

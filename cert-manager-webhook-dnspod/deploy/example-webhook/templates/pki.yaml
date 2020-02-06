@@ -4,11 +4,11 @@
 apiVersion: cert-manager.io/v1alpha2
 kind: Issuer
 metadata:
-  name: {{ include "cert-manager-webhook-dnspod.selfSignedIssuer" . }}
+  name: {{ include "app.selfSignedIssuer" . }}
   namespace: {{ .Release.Namespace | quote }}
   labels:
-    app: {{ include "cert-manager-webhook-dnspod.name" . }}
-    chart: {{ include "cert-manager-webhook-dnspod.chart" . }}
+    app: {{ include "app.name" . }}
+    chart: {{ include "app.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 spec:
@@ -20,19 +20,19 @@ spec:
 apiVersion: cert-manager.io/v1alpha2
 kind: Certificate
 metadata:
-  name: {{ include "cert-manager-webhook-dnspod.rootCACertificate" . }}
+  name: {{ include "app.rootCACertificate" . }}
   namespace: {{ .Release.Namespace | quote }}
   labels:
-    app: {{ include "cert-manager-webhook-dnspod.name" . }}
-    chart: {{ include "cert-manager-webhook-dnspod.chart" . }}
+    app: {{ include "app.name" . }}
+    chart: {{ include "app.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 spec:
-  secretName: {{ include "cert-manager-webhook-dnspod.rootCACertificate" . }}
+  secretName: {{ include "app.rootCACertificate" . }}
   duration: 43800h # 5y
   issuerRef:
-    name: {{ include "cert-manager-webhook-dnspod.selfSignedIssuer" . }}
-  commonName: "ca.cert-manager-webhook-dnspod.cert-manager"
+    name: {{ include "app.selfSignedIssuer" . }}
+  commonName: "ca.app.cert-manager"
   isCA: true
 
 ---
@@ -41,16 +41,16 @@ spec:
 apiVersion: cert-manager.io/v1alpha2
 kind: Issuer
 metadata:
-  name: {{ include "cert-manager-webhook-dnspod.rootCAIssuer" . }}
+  name: {{ include "app.rootCAIssuer" . }}
   namespace: {{ .Release.Namespace | quote }}
   labels:
-    app: {{ include "cert-manager-webhook-dnspod.name" . }}
-    chart: {{ include "cert-manager-webhook-dnspod.chart" . }}
+    app: {{ include "app.name" . }}
+    chart: {{ include "app.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 spec:
   ca:
-    secretName: {{ include "cert-manager-webhook-dnspod.rootCACertificate" . }}
+    secretName: {{ include "app.rootCACertificate" . }}
 
 ---
 
@@ -58,33 +58,33 @@ spec:
 apiVersion: cert-manager.io/v1alpha2
 kind: Certificate
 metadata:
-  name: {{ include "cert-manager-webhook-dnspod.servingCertificate" . }}
+  name: {{ include "app.servingCertificate" . }}
   namespace: {{ .Release.Namespace | quote }}
   labels:
-    app: {{ include "cert-manager-webhook-dnspod.name" . }}
-    chart: {{ include "cert-manager-webhook-dnspod.chart" . }}
+    app: {{ include "app.name" . }}
+    chart: {{ include "app.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 spec:
-  secretName: {{ include "cert-manager-webhook-dnspod.servingCertificate" . }}
+  secretName: {{ include "app.servingCertificate" . }}
   duration: 8760h # 1y
   issuerRef:
-    name: {{ include "cert-manager-webhook-dnspod.rootCAIssuer" . }}
+    name: {{ include "app.rootCAIssuer" . }}
   dnsNames:
-  - {{ include "cert-manager-webhook-dnspod.fullname" . }}
-  - {{ include "cert-manager-webhook-dnspod.fullname" . }}.{{ .Release.Namespace }}
-  - {{ include "cert-manager-webhook-dnspod.fullname" . }}.{{ .Release.Namespace }}.svc
+  - {{ include "app.fullname" . }}
+  - {{ include "app.fullname" . }}.{{ .Release.Namespace }}
+  - {{ include "app.fullname" . }}.{{ .Release.Namespace }}.svc
 {{- if .Values.clusterIssuer.enabled }}
 ---
 
 apiVersion: cert-manager.io/v1alpha2
 kind: ClusterIssuer
 metadata:
-  name: {{ include "cert-manager-webhook-dnspod.clusterIssuer" . }}
+  name: {{ include "app.clusterIssuer" . }}
   namespace: {{ .Release.Namespace | quote }}
   labels:
-    app: {{ include "cert-manager-webhook-dnspod.name" . }}
-    chart: {{ include "cert-manager-webhook-dnspod.chart" . }}
+    app: {{ include "app.name" . }}
+    chart: {{ include "app.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 spec:
@@ -96,7 +96,7 @@ spec:
 {{- end }}
     email: {{ .Values.clusterIssuer.email }}
     privateKeySecretRef:
-      name: {{ include "cert-manager-webhook-dnspod.fullname" . }}-letsencrypt
+      name: {{ include "app.fullname" . }}-letsencrypt
     solvers:
     - dns01:
         webhook:
@@ -106,5 +106,5 @@ spec:
             apiID: {{ required ".Values.secrets.apiID is required" .Values.secrets.apiID }}
             apiTokenSecretRef:
               key: api-token
-              name: {{ include "cert-manager-webhook-dnspod.fullname" . }}-secret
+              name: {{ include "app.fullname" . }}-secret
 {{- end }}

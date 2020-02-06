@@ -37,18 +37,87 @@ spec:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- with .Values.env }}
+          env:
+          {{ toYaml . | nindent 12 }}
+          {{- end }}
           volumeMounts:
             - name: data
-              mountPath: "/var/atlassian/application-data/confluence"
+              mountPath: {{ .Values.mountPath }}
             - name: home
               mountPath: "/opt/atlassian/confluence"
+          {{- with .Values.extraVolumeMounts }}
+          {{ tpl . $ | nindent 10 }}
+          {{- end }}
           ports:
             - name: http
               containerPort: {{ .Values.containerPort }}
               protocol: TCP
+            {{- with .Values.extraPorts }}
+            {{ tpl . $ | nindent 12 }}
+            {{- end }}
+          {{- if .Values.probe.enabled }}
+          livenessProbe:
+            {{- if eq .Values.probe.type "httpGet" }}
+            httpGet:
+            {{ toYaml .Values.probe.httpGet | nindent 14 }}
+            {{- end }}
+            {{- if eq .Values.probe.type "tcpSocket" }}
+            tcpSocket:
+            {{ toYaml .Values.probe.tcpSocket | nindent 14 }}
+            {{- end }}
+            initialDelaySeconds: {{ .Values.probe.livenessProbe.initialDelaySeconds }}
+            timeoutSeconds: {{ .Values.probe.livenessProbe.timeoutSeconds }}
+            periodSeconds: {{ .Values.probe.livenessProbe.timeoutSeconds }}
+          readinessProbe:
+            {{- if eq .Values.probe.type "httpGet" }}
+            httpGet:
+            {{ toYaml .Values.probe.httpGet | indent 14 }}
+            {{- end }}
+            {{- if eq .Values.probe.type "tcpSocket" }}
+            tcpSocket:
+            {{ toYaml .Values.probe.tcpSocket | indent 14 }}
+            {{- end }}
+            initialDelaySeconds: {{ .Values.probe.readinessProbe.initialDelaySeconds }}
+            timeoutSeconds: {{ .Values.probe.readinessProbe.timeoutSeconds }}
+            periodSeconds: {{ .Values.probe.readinessProbe.timeoutSeconds }}
+          {{- end }}  
+          resources:
+          {{ toYaml .Values.resources | nindent 12 }}
+        {{- with .Values.extraContainers }}
+        {{ tpl . $ | nindent 8 }}
+        {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+      {{ toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+      {{ toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+      {{ toYaml . | nindent 8 }}
+      {{- end }}
+      {{- if .Values.priorityClassName }}
+      priorityClassName: {{ .Values.priorityClassName }}
+      {{- end }}  
+      terminationGracePeriodSeconds: 60
       volumes:
         - name: data
+        {{- if .Values.persistence.enabled }}
           persistentVolumeClaim:
-            claimName: confluence
-        - name: home
+            claimName: {{ .Values.persistence.existingClaim | default (include "app.fullname" .) }}
+        {{- else }}
           emptyDir: {}
+        {{- end -}}
+        - name: home
+        {{- if .Values.persistence.enabled }}
+          persistentVolumeClaim:
+            claimName: {{ .Values.persistence.existingClaim | default (include "app.fullname" .) }}
+        {{- else }}
+          emptyDir: {}
+        {{- end -}}
+        {{- with .Values.extraVolumes }}
+        {{ tpl . $ | nindent 8 }}
+        {{- end }}

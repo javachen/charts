@@ -38,30 +38,30 @@ spec:
           image: "{{ .Values.image.repository }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           volumeMounts:
-          - name: data
-            mountPath: {{ .Values.mountPath }}
-          - name: home
-            mountPath: /opt/atlassian/confluence
-{{- with .Values.extraVolumeMounts }}
-{{ tpl . $ | indent 12 }}
-{{- end }}
+            - name: data
+              mountPath: {{ .Values.mountPath }}
+            - name: home
+              mountPath: /opt/atlassian/confluence
+            {{- with .Values.extraVolumeMounts }}
+            {{ tpl . $ | nindent 12 }}
+            {{- end }}
           ports:
             - name: http
               containerPort: {{ .Values.containerPort }}
               protocol: TCP
-{{- with .Values.extraPorts }}
-{{ tpl . $ | indent 12 }}
-{{- end }}
+            {{- with .Values.extraPorts }}
+            {{ tpl . $ | nindent 12 }}
+            {{- end }}
         {{- if .Values.probe.enabled }}
           livenessProbe:
-{{- if eq .Values.probe.type "httpGet" }}
+            {{- if eq .Values.probe.type "httpGet" }}
             httpGet:
-{{ toYaml .Values.probe.httpGet | indent 14 }}
-{{- end }}
-{{- if eq .Values.probe.type "tcpSocket" }}
+            {{ toYaml .Values.probe.httpGet | nindent 14 }}
+            {{- end }}
+            {{- if eq .Values.probe.type "tcpSocket" }}
             tcpSocket:
-{{ toYaml .Values.probe.tcpSocket | indent 14 }}
-{{- end }}
+            {{ toYaml .Values.probe.tcpSocket | nindent 14 }}
+            {{- end }}
             initialDelaySeconds: {{ .Values.probe.livenessProbe.initialDelaySeconds }}
             timeoutSeconds: {{ .Values.probe.livenessProbe.timeoutSeconds }}
             periodSeconds: {{ .Values.probe.livenessProbe.timeoutSeconds }}

@@ -43,9 +43,7 @@ spec:
           {{- end }}
           volumeMounts:
             - name: data
-              mountPath: "/var/atlassian/application-data/confluence"
-            - name: home
-              mountPath: "/opt/atlassian/confluence"
+              mountPath: {{ .Values.mountPath }}
           {{- with .Values.extraVolumeMounts }}
           {{ tpl . $ | nindent 10 }}
           {{- end }}
@@ -105,11 +103,12 @@ spec:
       terminationGracePeriodSeconds: 60
       volumes:
         - name: data
+        {{- if .Values.persistence.enabled }}
           persistentVolumeClaim:
-            claimName: confluence
-        - name: home
-          persistentVolumeClaim:
-            claimName: confluence-home
+            claimName: {{ .Values.persistence.existingClaim | default (include "app.fullname" .) }}
+        {{- else }}
+          emptyDir: {}
+        {{- end -}}
         {{- with .Values.extraVolumes }}
         {{ tpl . $ | nindent 8 }}
         {{- end }}

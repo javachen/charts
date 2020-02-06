@@ -55,6 +55,8 @@ ingress:
 
 containerPort: 8090
 
+env: |
+
 ## Add additional ports, eg. for custom admin console
 extraPorts: |
 extraContainers: |
@@ -80,7 +82,6 @@ podLabels: {}
 
 ## Extra Annotations to be added to pod
 podAnnotations: {}
-
 
 resources: {}
   # limits:

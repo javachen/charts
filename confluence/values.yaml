@@ -57,9 +57,9 @@ containerPort: 8090
 
 env: 
   - name: JVM_MINIMUM_MEMORY
-    value: "1024m"
-  - name: JVM_MAXIMUM_MEMORY
     value: "3072m"
+  - name: JVM_MAXIMUM_MEMORY
+    value: "4096m"
 
 ## Add additional ports, eg. for custom admin console
 extraPorts: |

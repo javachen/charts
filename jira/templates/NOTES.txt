@@ -40,10 +40,3 @@
 {{- end }}
 
 {{- end }}
-
-{{- if .Release.IsInstall }}
-
-
-To retrieve the initial user password run:
-kubectl get secret --namespace {{ .Release.Namespace }} {{ template "app.fullname" . }}-http -o jsonpath="{.data.password}" | base64 --decode; echo
-{{- end }}

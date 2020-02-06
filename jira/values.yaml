@@ -50,6 +50,8 @@ ingress:
   #     - jira.example.com
   #   secretName: tls-jira
 
+env: []
+
 containerPort: 8080
 ## Add additional ports, eg. for custom admin console
 extraPorts: |
@@ -76,7 +78,6 @@ podLabels: {}
 
 ## Extra Annotations to be added to pod
 podAnnotations: {}
-
 
 resources: {}
   # limits:

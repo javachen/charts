@@ -1,3 +1,4 @@
-*
-!go.*
-!*.go
+.git
+cert-manager-webhook-dnspod
+__main__
+_out

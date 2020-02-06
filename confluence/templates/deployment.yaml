@@ -42,21 +42,21 @@ spec:
           {{ toYaml . | nindent 12 }}
           {{- end }}
           volumeMounts:
-          - name: data
-            mountPath: "/var/atlassian/application-data/confluence"
-          - name: home
-            mountPath: "/opt/atlassian/confluence"
+            - name: data
+              mountPath: "/var/atlassian/application-data/confluence"
+            - name: home
+              mountPath: "/opt/atlassian/confluence"
           ports:
             - name: http
               containerPort: {{ .Values.containerPort }}
               protocol: TCP
       volumes:
-      - name: data
-      {{- if .Values.persistence.enabled }}
-        persistentVolumeClaim:
-          claimName: {{ .Values.persistence.existingClaim | default (include "app.fullname" .) }}
-      {{- else }}
-        emptyDir: {}
-      {{- end -}}
-      - name: home
-        emptyDir: {}
+        - name: data
+        {{- if .Values.persistence.enabled }}
+          persistentVolumeClaim:
+            claimName: {{ .Values.persistence.existingClaim | default (include "app.fullname" .) }}
+        {{- else }}
+          emptyDir: {}
+        {{- end -}}
+        - name: home
+          emptyDir: {}

@@ -114,7 +114,7 @@ spec:
         - name: home
         {{- if .Values.persistence.enabled }}
           persistentVolumeClaim:
-            claimName: {{ .Values.persistence.existingClaim | default (include "app.fullname" .) }}
+            claimName: {{ .Values.persistence.existingClaim | default (include "app.fullname" .) }}-home
         {{- else }}
           emptyDir: {}
         {{- end -}}

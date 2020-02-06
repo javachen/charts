@@ -55,7 +55,11 @@ ingress:
 
 containerPort: 8090
 
-env: |
+env: 
+  - name: JVM_MINIMUM_MEMORY
+    value: "3072m"
+  - name: JVM_MAXIMUM_MEMORY
+    value: "3072m"
 
 ## Add additional ports, eg. for custom admin console
 extraPorts: |

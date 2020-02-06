@@ -57,7 +57,7 @@ containerPort: 8090
 
 env: 
   - name: JVM_MINIMUM_MEMORY
-    value: "3072m"
+    value: "1024m"
   - name: JVM_MAXIMUM_MEMORY
     value: "3072m"
 

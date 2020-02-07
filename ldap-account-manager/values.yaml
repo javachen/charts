@@ -28,7 +28,7 @@ service:
 
   ## Optional static port assignment for service type NodePort.
   # nodePort: 30000
-  port: 8090
+  port: 80
 
 ## Ingress configuration.
 ## ref: https://kubernetes.io/docs/user-guide/ingress/

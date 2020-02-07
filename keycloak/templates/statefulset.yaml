@@ -41,12 +41,12 @@ spec:
       serviceAccountName: {{ include "keycloak.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.keycloak.securityContext | nindent 8 }}
-    {{- with .Values.keycloak.image.pullSecrets }}
+      {{- with .Values.keycloak.image.pullSecrets }}
       imagePullSecrets:
-      {{- range . }}
+        {{- range . }}
         - name: {{ . }}
+        {{- end }}
       {{- end }}
-    {{- end }}
     {{- if or .Values.keycloak.persistence.deployPostgres .Values.keycloak.extraInitContainers }}
       initContainers:
       {{- if .Values.keycloak.persistence.deployPostgres }}

@@ -61,7 +61,7 @@ env: []
 extraPorts: |
 extraContainers: |
 
-mountPath: /var/lib/ldap-account-manager
+mountPath: /var/lib/ldap-account-manager/config
 ## Add additional volumes and mounts, e. g. 
 extraVolumes: |
 extraVolumeMounts: |

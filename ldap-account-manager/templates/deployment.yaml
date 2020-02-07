@@ -1,0 +1,114 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "app.fullname" . }}
+  labels:
+{{ include "app.labels" . | indent 4 }}
+spec:
+  replicas: {{ .Values.replicas }}
+  selector:
+    matchLabels:
+{{ include "app.labels" . | indent 6 }}
+  template:
+    metadata:
+      labels:
+{{ include "app.labels" . | indent 8 }}
+      {{- if .Values.podLabels }}
+{{ toYaml .Values.podLabels | indent 8 }}
+      {{- end }}   
+{{- if .Values.podAnnotations }}
+      annotations:
+{{ toYaml .Values.podAnnotations | indent 8 }}
+{{- end }}
+    spec:
+{{- with .Values.hostAliases }}
+      hostAliases:
+{{ toYaml . | indent 8 }}
+{{- end }}
+      securityContext:
+{{ toYaml .Values.securityContext | indent 8 }}
+    {{- with .Values.image.pullSecrets }}
+      imagePullSecrets:
+      {{- range . }}
+        - name: {{ . }}
+      {{- end }}
+    {{- end }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- with .Values.env }}
+          env:
+          {{ toYaml . | nindent 12 }}
+          {{- end }}
+          volumeMounts:
+            - name: data
+              mountPath: {{ .Values.mountPath }}
+          {{- with .Values.extraVolumeMounts }}
+          {{ tpl . $ | nindent 10 }}
+          {{- end }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.containerPort }}
+              protocol: TCP
+            {{- with .Values.extraPorts }}
+            {{ tpl . $ | nindent 12 }}
+            {{- end }}
+          {{- if .Values.probe.enabled }}
+          livenessProbe:
+            {{- if eq .Values.probe.type "httpGet" }}
+            httpGet:
+            {{ toYaml .Values.probe.httpGet | nindent 14 }}
+            {{- end }}
+            {{- if eq .Values.probe.type "tcpSocket" }}
+            tcpSocket:
+            {{ toYaml .Values.probe.tcpSocket | nindent 14 }}
+            {{- end }}
+            initialDelaySeconds: {{ .Values.probe.livenessProbe.initialDelaySeconds }}
+            timeoutSeconds: {{ .Values.probe.livenessProbe.timeoutSeconds }}
+            periodSeconds: {{ .Values.probe.livenessProbe.timeoutSeconds }}
+          readinessProbe:
+            {{- if eq .Values.probe.type "httpGet" }}
+            httpGet:
+            {{ toYaml .Values.probe.httpGet | indent 14 }}
+            {{- end }}
+            {{- if eq .Values.probe.type "tcpSocket" }}
+            tcpSocket:
+            {{ toYaml .Values.probe.tcpSocket | indent 14 }}
+            {{- end }}
+            initialDelaySeconds: {{ .Values.probe.readinessProbe.initialDelaySeconds }}
+            timeoutSeconds: {{ .Values.probe.readinessProbe.timeoutSeconds }}
+            periodSeconds: {{ .Values.probe.readinessProbe.timeoutSeconds }}
+          {{- end }}  
+          resources:
+          {{ toYaml .Values.resources | nindent 12 }}
+        {{- with .Values.extraContainers }}
+        {{ tpl . $ | nindent 8 }}
+        {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+      {{ toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+      {{ toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+      {{ toYaml . | nindent 8 }}
+      {{- end }}
+      {{- if .Values.priorityClassName }}
+      priorityClassName: {{ .Values.priorityClassName }}
+      {{- end }}  
+      terminationGracePeriodSeconds: 60
+      volumes:
+        - name: data
+        {{- if .Values.persistence.enabled }}
+          persistentVolumeClaim:
+            claimName: {{ .Values.persistence.existingClaim | default (include "app.fullname" .) }}
+        {{- else }}
+          emptyDir: {}
+        {{- end -}}
+        {{- with .Values.extraVolumes }}
+        {{ tpl . $ | nindent 8 }}
+        {{- end }}

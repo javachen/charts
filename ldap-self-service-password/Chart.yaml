@@ -1,7 +1,7 @@
 apiVersion: v2
 appVersion: 0.0.1
 description: A Helm chart for Kubernetes
-name: ldap-account-manager
+name: ldap-self-service-password
 type: application
 version: 1.0.0
 icon: https://helm.sh/img/favicon-152.png

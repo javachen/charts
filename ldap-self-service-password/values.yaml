@@ -4,7 +4,7 @@
 replicas: 1
 
 image:
-  repository: ldapaccountmanager/lam:latest
+  repository: tiredofit/self-service-password:latest
   pullPolicy: IfNotPresent
   ## Optionally specify an array of imagePullSecrets.
   ## Secrets must be manually created in the namespace.
@@ -45,7 +45,7 @@ ingress:
 
   ## List of hosts for the ingress
   hosts:
-    - lam.example.com
+    - ldap-password.example.com
 
   ## TLS configuration
   tls: []
@@ -61,7 +61,7 @@ env: []
 extraPorts: |
 extraContainers: |
 
-mountPath: /etc/ldap-account-manager
+mountPath: /www/ssp
 ## Add additional volumes and mounts, e. g. 
 extraVolumes: |
 extraVolumeMounts: |

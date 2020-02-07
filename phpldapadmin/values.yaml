@@ -1,0 +1,135 @@
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicas: 1
+
+image:
+  repository: osixia/phpldapadmin
+  pullPolicy: IfNotPresent
+  ## Optionally specify an array of imagePullSecrets.
+  ## Secrets must be manually created in the namespace.
+  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+  pullSecrets: []
+  # - myRegistrKeySecretName
+
+nameOverride: ""
+fullnameOverride: ""
+
+service:
+  annotations: {}
+  # service.beta.kubernetes.io/aws-load-balancer-internal: "0.0.0.0/0"
+
+  labels: {}
+  # key: value
+
+  ## ServiceType
+  ## ref: https://kubernetes.io/docs/user-guide/services/#publishing-services---service-types
+  type: ClusterIP
+
+  ## Optional static port assignment for service type NodePort.
+  # nodePort: 30000
+  port: 80
+
+## Ingress configuration.
+## ref: https://kubernetes.io/docs/user-guide/ingress/
+ingress:
+  enabled: false
+  path: /
+
+  annotations: 
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: "0"
+    # kubernetes.io/tls-acme: "true"
+    # ingress.kubernetes.io/affinity: cookie
+
+  ## List of hosts for the ingress
+  hosts:
+    - phpldapadmin.example.com
+
+  ## TLS configuration
+  tls: []
+  # - hosts:
+  #     - confluence.example.com
+  #   secretName: tls-confluence
+
+containerPort: 80
+
+env: []
+
+## Add additional ports, eg. for custom admin console
+extraPorts: |
+extraContainers: |
+
+mountPath: /var/www/phpldapadmin
+## Add additional volumes and mounts, e. g. 
+extraVolumes: |
+extraVolumeMounts: |
+
+hostAliases: []
+#  - ip: "1.2.3.4"
+#    hostnames:
+#      - "my.host.com"
+
+securityContext: 
+  runAsUser: 0
+  fsGroup: 0
+  runAsNonRoot: false
+
+## Additional pod labels
+## ref: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
+podLabels: {}
+
+## Extra Annotations to be added to pod
+podAnnotations: {}
+
+resources: {}
+  # limits:
+  #   cpu: "100m"
+  #   memory: "1024Mi"
+  # requests:
+  #   cpu: "100m"
+  #   memory: "1024Mi"
+
+nodeSelector: {}
+priorityClassName: ""
+tolerations: []
+affinity: {}
+
+probe:
+  enabled: false
+  type: httpGet
+  tcpSocket:
+    port: 80
+  httpGet:
+    path: /
+    port: 80
+  livenessProbe:
+    initialDelaySeconds: 90
+    timeoutSeconds: 30
+    periodSeconds: 5
+  readinessProbe:
+    initialDelaySeconds: 90
+    timeoutSeconds: 30
+    periodSeconds: 5
+
+## Enable persistence using Persistent Volume Claims
+## ref: http://kubernetes.io/docs/user-guide/persistent-volumes/
+persistence:
+  enabled: false
+
+  ## A manually managed Persistent Volume and Claim
+  ## Requires persistence.enabled: true
+  ## If defined, PVC must be created manually before volume will be bound
+  # existingClaim:
+
+  ## rabbitmq data Persistent Volume Storage Class
+  ## If defined, storageClassName: <storageClass>
+  ## If set to "-", storageClassName: "", which disables dynamic provisioning
+  ## If undefined (the default) or set to null, no storageClassName spec is
+  ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
+  ##   GKE, AWS & OpenStack)
+  ##
+  # storageClass: "-"
+  accessMode: ReadWriteOnce
+  size: 5Gi

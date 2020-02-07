@@ -1,0 +1,28 @@
+{{- $service := .Values.service -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "app.fullname" . }}
+{{- with $service.annotations }}
+  annotations:
+{{ toYaml . | indent 4 }}
+{{- end }}
+  labels:
+{{ include "app.labels" . | indent 4 }}
+{{- with $service.labels }}
+{{ toYaml . | indent 4 }}
+{{- end }}
+
+spec:
+  type: {{ $service.type }}
+  ports:
+    - name: http
+      port: {{ $service.port }}
+      targetPort: http
+    {{- if and (eq "NodePort" $service.type) $service.nodePort }}
+      nodePort: {{ $service.nodePort }}
+    {{- end }}
+      protocol: TCP
+  selector:
+    app: {{ template "app.name" . }}
+    release: "{{ .Release.Name }}"

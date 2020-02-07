@@ -61,10 +61,10 @@ keycloak:
   ## Additional init containers, e. g. for providing custom themes
   extraInitContainers: |
 
-  ## Additional sidecar containers, e. g. for a database proxy, such as Google's cloudsql-proxy
+## Additional sidecar containers, e. g. for a database proxy, such as Google cloudsql-proxy 
   extraContainers: |
 
-  ## lifecycleHooks defines the container lifecycle hooks
+## lifecycleHooks defines the container lifecycle hooks
   lifecycleHooks: |
     # postStart:
     #   exec:

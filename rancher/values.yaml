@@ -65,7 +65,6 @@ ingress:
 letsEncrypt:
   # email: none@example.com
   environment: production
-  solvers: []
 
 # If you are using certs signed by a private CA set to 'true' and set the 'tls-ca'
 # in the 'rancher-system' namespace. See the README.md for details

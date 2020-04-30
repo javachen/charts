@@ -6,7 +6,7 @@ apiVersion: cert-manager.io/v1alpha2
     {{- else if or (.Capabilities.APIVersions.Has "certmanager.k8s.io/v1alpha1") (and (eq (int $certmanagerVer._0) 0) (lt (int $certmanagerVer._1) 11)) }}
 apiVersion: certmanager.k8s.io/v1alpha1
     {{- end }}
-kind: Issuer
+kind: ClusterIssuer
 metadata:
   name: {{ template "rancher.fullname" . }}
   labels:

@@ -4,7 +4,7 @@
 replicas: 1
 
 image:
-  repository: gitea/gitea
+  repository: gitea/gitea:1.11.4
   pullPolicy: IfNotPresent
   ## Optionally specify an array of imagePullSecrets.
   ## Secrets must be manually created in the namespace.

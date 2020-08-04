@@ -52,7 +52,7 @@ spec:
               containerPort: {{ .Values.containerPort }}
               protocol: TCP
             {{- with .Values.extraPorts }}
-            {{ tpl . $ | nindent 12 }}
+              {{ toYaml . | nindent 12 }}
             {{- end }}
           {{- if .Values.probe.enabled }}
           livenessProbe:
@@ -83,7 +83,7 @@ spec:
           resources:
           {{ toYaml .Values.resources | nindent 12 }}
         {{- with .Values.extraContainers }}
-        {{ tpl . $ | nindent 8 }}
+        {{ toYaml . $ | nindent 8 }}
         {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:

@@ -3,8 +3,8 @@ images:
   ## ref: https://hub.docker.com/r/drone/drone/tags/
   ##
   server:
-    repository: "drone/drone"
-    tag: 1.6.4
+    repository: drone/drone
+    tag: 1.7.0
     pullPolicy: IfNotPresent
 
   ## The official drone (agent) image, change tag to use a different version.
@@ -12,7 +12,7 @@ images:
   ##
   agent:
     repository: "drone/agent"
-    tag: 1.6.4
+    tag: 1.7.0
     pullPolicy: IfNotPresent
 
   ## The official docker (dind) image, change tag to use a different version.
